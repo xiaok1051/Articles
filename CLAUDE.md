@@ -9,7 +9,7 @@ RDMA 技术文章系列。所有文章位于 `articles/` 目录，按编号顺�
 ## Project Structure
 
 ```
-articles/           # 全部 md 文章 (16 篇，编号 01-15)
+articles/           # 全部 md 文章 (17 篇，编号 01-17)
 images/             # 配图 (png/svg)
 html/               # 微信公众号等排版后的 HTML 版本
 docs/superpowers/   # 文章设计和实施计划
@@ -31,8 +31,8 @@ Phase 1 (环境搭建): 01-02
 Phase 2 (编程入门): 03-05
 Phase 3 (协议网络): 06-07
 Phase 4 (硬件接口): 08
-Phase 5 (内核调用栈): 09-14
-Phase 6 (分布式系统): 15+
+Phase 5 (内核调用栈): 09-15
+Phase 6 (分布式系统): 16+
 
 ## Writing New Articles
 
