@@ -588,3 +588,49 @@ UEC 与 InfiniBand 的竞争,本质是"开放生态 vs 封闭一体化"的竞争
 ---
 
 UEC 的故事,是一个关于"开放与封闭、补丁与重写"的故事。RoCE 用补丁让以太网跑起了 RDMA,UEC 则用重写让以太网真正为 AI 做好了准备。至于它最终能否取代 IB 成为 AI 集群的新底座,时间会给出答案——但无论如何,它提出的那套传输层设计,已经为下一代网络画出了清晰的路线图。
+
+---
+
+## 附录
+
+### A1. 术语表
+
+| 缩写 | 全称 | 中文 |
+|------|------|------|
+| UEC | Ultra Ethernet Consortium | 超以太网联盟 |
+| UET | Ultra Ethernet Transport | 超以太网传输层 |
+| LLR | Link Layer Retry | 链路级重传 |
+| PFC | Priority Flow Control | 优先级流控 |
+| ECMP | Equal-Cost Multi-Path | 等代价多路径 |
+| HOL | Head-of-Line blocking | 头阻阻塞 |
+| NACK | Negative Acknowledgment | 否定确认(请求重传) |
+| MPI | Message Passing Interface | 消息传递接口 |
+| RDMA | Remote Direct Memory Access | 远程直接内存访问 |
+| RoCE | RDMA over Converged Ethernet | 融合以太网上的 RDMA |
+| IB | InfiniBand | 无限带宽 |
+| INT | In-band Network Telemetry | 带内网络遥测 |
+| HPCC | High Precision Congestion Control | 高精度拥塞控制 |
+| DCQCN | Data Center Quantized Congestion Notification | 数据中心量化拥塞通知 |
+| packet spraying | — | 包喷发(多路径负载均衡) |
+| selective retransmission | — | 选择性重传(丢哪个重传哪个) |
+| in-cast | — | 多对一汇聚流量 |
+
+### A2. 参考文献
+
+1. Ultra Ethernet Consortium 官网及 UEC 1.0 规范:https://ultraethernet.org/
+2. "Ultra Ethernet Consortium Announces the Release of UEC Specification 1.0",TechPowerUp,2025-06-12
+3. "Ultra Ethernet Has Arrived: One Network to Rule Them All?",HPCwire,2025-09-09
+4. "AMD rolls out first Ultra Ethernet-compliant NIC",Network World
+5. "Arista's Ullal: Ethernet is the 'eventual winner' for AI networking",Fierce Network
+6. Y. Zhu et al.,"Congestion Control for Large-Scale RDMA Deployments",SIGCOMM 2015(DCQCN)
+7. Y. Li et al.,"HPCC: High Precision Congestion Control",SIGCOMM 2019
+8. Google Swift(见「拥塞控制那篇」参考文献)
+
+### A3. 配图清单
+
+- `../images/20-uec-roce-pain.png` — RoCE 三大痛点示意(HOL blocking / Go-Back-N / 无语义)
+- `../images/20-uec-stack-arch.png` — UEC 分层架构 + IB/RoCE 对照
+- `../images/20-uec-llr-vs-pfc.png` — LLR 链路级重传 vs PFC 反压对照
+- `../images/20-uec-packet-spraying.png` — packet spraying 多路径 vs ECMP 单路径
+- `../images/20-uec-out-of-order.png` — 乱序交付 + 选择性重传时序
+- `../images/20-uec-mpi-tag-matching.png` — 语义层 MPI tag matching 下沉示意
