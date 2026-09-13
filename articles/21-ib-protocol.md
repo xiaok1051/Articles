@@ -563,3 +563,131 @@ P_Key 在 BTH 里,跟着报文走;Q_Key 在报文的 Q_Key 字段里,收端用�
 
 ---
 
+## 7. 实战工具链
+
+前面六章是理论,这一章动手验证。IB 的管理/诊断工具都在 OFED(OpenFabrics Enterprise Distribution)的 `ibutils` / `infiniband-diags` 包里,最常用的几个如下。命令输出因环境和版本而异,文中标注「示意」的均为示例,不代表精确输出。
+
+### 7.1 opensm:启动 SM
+
+`opensm` 是最常见的开源 SM 实现:
+
+```bash
+opensm                  # 启动 SM,用默认参数
+opensm -p 10            # 指定优先级 10(数字越大,越优先当选 Master)
+opensm -R fat-tree      # 指定 fat-tree 路由算法(第 3 章那几种算法)
+```
+
+路由算法、LID 分配策略等,通常在 `/etc/opensm/opensm.conf` 里配置。
+
+### 7.2 ibnetdiscover:看拓扑
+
+```bash
+ibnetdiscover
+```
+
+输出一张子网拓扑(示意),能看到谁连着谁、各自 LID:
+
+```
+# 拓扑示意
+Switch 0x... (LID 3)
+  [1] -> HCA (LID 1)
+  [2] -> HCA (LID 2)
+```
+
+### 7.3 smpquery:直接查管理属性
+
+`smpquery` 最有价值——它直接发 SMP 去查某个节点的管理属性,正好对应第 2/3/4 章讲的概念:
+
+```bash
+smpquery nodeinfo 1        # 查 LID=1 的节点信息(NodeInfo)
+smpquery lft 3             # 查交换机(LID=3)的线性转发表(LFT,第 4 章)
+smpquery sl2vl 1           # 查 SL2VL 映射表(第 5 章)
+smpquery -D nodeinfo 0     # 直连路由查自身(第 2 章讲的 Directed Route)
+```
+
+第 4 章说「LFT 是 LID → 端口」,`smpquery lft 3` 就能把它 dump 出来亲眼验证(示意):
+
+```
+# LID 3 的线性转发表(示意)
+LID   Port
+0x0001  1
+0x0002  2
+0x0003  0
+...
+```
+
+### 7.4 ibdiagnet / ibdiagpath:诊断
+
+```bash
+ibdiagnet                 # 全子网体检:链路、错误计数、跳数、SM 状态
+ibdiagpath -s 1 -d 2      # 查 LID 1 到 LID 2 的路径
+```
+
+`ibdiagnet` 能发现链路问题(比如某条线 CRC 错误偏高),`ibdiagpath` 能把任意两点之间的转发路径打印出来,对照第 4 章「逐跳查 LFT」的理解。
+
+### 7.5 一个完整流程
+
+把上面的串起来,验证整篇文章:
+
+```bash
+# 1. 起 SM,组网
+opensm &
+
+# 2. 看拓扑长什么样
+ibnetdiscover
+
+# 3. 查某台交换机的 LFT,验证「SM 下发转发表」
+smpquery lft 3
+
+# 4. 查 SL2VL,验证「QoS 的 SL→VL 映射」
+smpquery sl2vl 1
+```
+
+---
+
+## 附录
+
+### 术语表
+
+| 术语 | 全称 | 说明 |
+|------|------|------|
+| IB | InfiniBand | 高性能互连协议标准,由 IBTA 定义 |
+| HCA / TCA | Host/Target Channel Adapter | 主机/目标通道适配器,报文端点 |
+| LRH | Local Route Header | 链路层头,含 LID 寻址 |
+| GRH | Global Route Header | 全局路由头,跨子网用 |
+| BTH | Base Transport Header | 基本传输头 |
+| LID | Local Identifier | 16 位本地标识,子网内地址 |
+| GID | Global Identifier | 128 位全局标识,跨子网地址 |
+| SM | Subnet Manager | 子网管理器,负责发现/算路/下表 |
+| SMA | Subnet Management Agent | 子网管理代理,每节点都有 |
+| SA | Subnet Administrator | 子网管理员,路径解析/服务 |
+| MAD | Management Datagram | 256 字节管理报文 |
+| SMP | Subnet Management Packet | 子网管理报文(QP0) |
+| LFT | Linear Forwarding Table | 线性转发表,LID→端口 |
+| MFT | Multicast Forwarding Table | 多播转发表,MLID→端口组 |
+| VL | Virtual Lane | 虚拟通道 |
+| SL | Service Level | 服务级别 |
+| P_Key | Partition Key | 分区键,逻辑隔离 |
+| MLID | Multicast LID | 多播 LID |
+| LMC | LID Mask Control | 让一个端口拥有多个 LID |
+
+### 参考文献
+
+- InfiniBand Architecture Specification, Volume 1(IBTA)——LRH/MAD/子网管理等协议的权威定义;
+- OpenSM 官方文档——SM 实现、路由算法、配置;
+- ibutils / infiniband-diags 手册页(`man smpquery`、`man ibnetdiscover`)——诊断工具用法;
+- Wireshark InfiniBand 解析器源码——MAD 公共头字段的字段级交叉验证。
+
+### 配图清单
+
+| 图 | 文件 | 说明 |
+|----|------|------|
+| 1 | `21-ib-stack.png` | IB 分层栈 + 三种设备角色 |
+| 2 | `21-ib-packet-format.png` | 数据报文逐字节布局 |
+| 3 | `21-ib-mad.png` | MAD 256B 布局 + 24B 公共头 + QP0/QP1 |
+| 4 | `21-ib-subnet-topology.png` | 子网拓扑 + LID 域 |
+| 5 | `21-ib-sm-discovery.png` | SM 子网发现流程 |
+| 6 | `21-ib-forwarding.png` | 报文转发 LID→LFT→端口 |
+| 7 | `21-ib-vl-credit.png` | VL 仲裁 + 信用流控 |
+| 8 | `21-ib-partition-multicast.png` | 分区 + 组播 |
+
