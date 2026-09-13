@@ -95,3 +95,157 @@ InfiniBand 规范(IBTA)把协议栈分成五层,从上到下:
 
 ---
 
+## 2. IB 报文格式
+
+IB 报文分两大类:**数据报文**(搬运业务数据)和**管理报文 MAD**(搬运管理信息)。两者走不同的 QP、结构也不同,但共用同一个链路层头 LRH。本章先拆数据报文,再拆管理报文。
+
+### 2.1 数据报文
+
+#### 整体结构
+
+```
++----------+-----------+----------+----------+---------+--------+--------+
+|   LRH    |    GRH    |    BTH   |  扩展头   | Payload |  ICRC  |  VCRC  |
+|  (8 B)   | (40 B,可选)|  (12 B) |  (可选)   |         |  (4 B) |  (2 B) |
++----------+-----------+----------+----------+---------+--------+--------+
+```
+
+- **LRH(链路层头)**:每个 IB 报文都有,8 字节,负责子网内的逐跳转发;
+- **GRH(全局路由头)**:跨子网时才加,40 字节;
+- **BTH(基本传输头)**:传输层头,12 字节,标识 QP、操作类型;
+- **扩展头**:按需附加(RETH / AETH / IMMETH 等);
+- **ICRC / VCRC**:两个 CRC,分别校验不变字段和变字段。
+
+#### LRH:链路层头(重点)
+
+LRH 是 IB 报文最独特的部分,也是 RoCE 报文里没有的东西(以太网那边是 MAC 头)。它只有 8 字节,字段如下:
+
+| 字段 | 位宽 | 说明 |
+|------|------|------|
+| VL | 4 bit | 虚拟通道号,决定报文走哪条 VL(第 5 章细讲) |
+| LVer | 4 bit | 链路版本 |
+| SL | 4 bit | 服务级别,交换机据此查 SL2VL 表决定出口 VL |
+| Reserved | 2 bit | 保留(扩展 LRH 里用作 LID 扩展标志) |
+| LNH | 2 bit | 下一头类型:2 = BTH(子网内),3 = GRH(跨子网) |
+| DLID | 16 bit | 目的 LID,决定交换机往哪个端口转发 |
+| Reserved | 5 bit | 保留 |
+| PktLen | 11 bit | 报文总长,以 4 字节字为单位 |
+| SLID | 16 bit | 源 LID |
+
+关键点有两个:
+
+1. **只有 LID,没有 MAC/IP。** LRH 里的地址就是 16 位的 DLID / SLID。它们不是硬件烧录的,而是 SM 在子网组建时动态分配的(第 3 章)。
+2. **LNH 决定「下一层是啥」。** 子网内报文 LNH = 2,后面直接跟 BTH;要跨子网时 LNH = 3,后面先跟 GRH(GRH 里的 NextHeader 再指向 BTH)。
+
+#### GRH:全局路由头(跨子网时)
+
+40 字节,IPv6 结构,和 IPv6 头几乎一一对应,最关键的是 16 字节的 **SGID** 和 16 字节的 **DGID**(全局标识,128 位)。
+
+在「报文格式那篇」讲过,GID 由网卡端口的 GID 表提供。原生 IB 逻辑一样:子网内只靠 LID 就够,一旦要出子网,就得用 GID 找到目标「在哪一个子网」,再由路由器接力(第 4 章)。
+
+#### BTH 与扩展头(简要回顾)
+
+BTH 是传输层头,12 字节,包含 Opcode(操作类型)、P_Key、DestQP(目的 QP 号)、PSN(包序号)等。这些字段 RoCE 和原生 IB **完全一致**——这正是「RoCE 复用 IB 传输层」的体现。逐字段含义见「报文格式那篇」,这里不重复。
+
+扩展头(Extended Transport Header)按需附加:RETH(远程内存,含虚拟地址 / 长度 / R_Key)、AETH(应答)、IMMETH(立即数)等,同样见前文。
+
+#### ICRC 与 VCRC
+
+IB 报文带两个 CRC:
+
+- **ICRC(Invariant CRC,4 字节)**:校验从 BTH 到 Payload 这些「传输过程中不变」的字段(交换机转发不会改它们);
+- **VCRC(Variant CRC,2 字节)**:校验 LRH 这类「每跳都可能变」的字段(比如 VL、SL 可能被交换机改写)。
+
+之所以拆两个:交换机转发时要改 LRH,如果只用一个 CRC,每个交换机都得重算整个报文的 CRC;拆开后,交换机只需更新 VCRC,ICRC 原样保留,硬件转发更快。
+
+### 2.2 管理报文 MAD / SMP
+
+数据报文搬运业务数据,而 IB 的「子网组建、配置、监控」这些管理动作,靠另一类专门的报文——**MAD(Management Datagram,管理报文)**。
+
+#### MAD 是什么
+
+MAD 是一个 **256 字节**的固定长度报文,走 **UD(不可靠数据报)** 队列。它不是业务数据,而是「管理命令」的载体:SM 用它查询节点信息、下发转发表,网卡用它上报事件。
+
+MAD 走两个专用 QP:
+
+| QP | 用途 |
+|----|------|
+| **QP0** | 子网管理(SMP),由每个节点的 SMA(子网管理代理)处理 |
+| **QP1** | 通用服务接口(GSI),跑 SA、通信管理、性能管理等其他 MAD |
+
+QP0 之所以单列,是因为它承载的子网管理报文(SMP)是整个子网能不能组起来的关键。
+
+#### 24 字节公共头
+
+所有 MAD 都有一个 24 字节的公共头,后面跟 232 字节的类特定数据:
+
+| 字段 | 位宽 | 说明 |
+|------|------|------|
+| BaseVersion | 8 bit | 版本,固定为 1 |
+| MgmtClass | 8 bit | 管理类,决定这个 MAD 交给哪个代理处理 |
+| ClassVersion | 8 bit | 类的版本 |
+| R + Method | 1 + 7 bit | R 位区分请求/响应;Method 是操作类型 |
+| Status | 16 bit | 状态码(响应报文里才有意义) |
+| ClassSpecific | 16 bit | 类特定(子网管理类专用) |
+| TransactionID | 64 bit | 事务 ID,请求和响应靠它配对 |
+| AttributeID | 16 bit | 属性 ID,决定操作的是哪个对象 |
+| Reserved | 16 bit | 保留 |
+| AttributeModifier | 32 bit | 属性修饰符,进一步限定属性 |
+
+#### Method:做什么操作
+
+Method 决定这是「读」还是「写」,常见值:
+
+| Method | 含义 |
+|--------|------|
+| Get / GetResp | 读一个属性 / 读的响应 |
+| Set / SetResp | 写一个属性 / 写的响应 |
+| Trap / TrapRepress | 事件上报 / 抑制上报 |
+| Report / ReportResp | 主动报告 / 报告的响应 |
+
+R 位是 Method 的最高位:请求是 0,响应是 1(所以 Get 是 0x01,GetResp 是 0x81)。SM 发给节点一个 Get(NodeInfo),节点回的 GetResp 里带同一个 TransactionID,SM 就知道「这条响应对应我哪条请求」。
+
+#### MgmtClass:交给谁处理
+
+MgmtClass 决定 MAD 路由到哪个代理:
+
+| MgmtClass | 含义 |
+|-----------|------|
+| 0x01 | 子网管理(Subnet Management),LID 路由,交给 SMA |
+| 0x81 | 子网管理(Subnet Management),**直连路由** |
+| 0x03 | 子网管理(Subnet Administration),交给 SA |
+| 0x04 | 性能管理(Performance Management) |
+| 0x06 | 设备管理(Device Management) |
+| 0x07 | 通信管理(Communication Management) |
+
+注意 **0x01 和 0x81 的区别**:它们都是子网管理类,差别只在「怎么路由」。0x01 走 LID 路由(靠转发表),0x81 走直连路由(靠报文里显式的端口路径)。这个区别是第 3 章「子网发现」的关键。
+
+#### AttributeID:操作哪个对象
+
+AttributeID 决定操作的是哪个属性。几个和本文强相关的:
+
+| AttributeID | 含义 |
+|-------------|------|
+| 0x0011 | NodeInfo(节点信息) |
+| 0x0012 | SwitchInfo(交换机信息) |
+| 0x0015 | PortInfo(端口信息) |
+| 0x0019 | LinearForwardingTable(线性转发表,即 LFT) |
+| 0x001B | MulticastForwardingTable(多播转发表,即 MFT) |
+
+看到 LFT(0x0019)和 MFT(0x001B)了吗?第 4 章要讲的「报文转发」,转发表就是 SM 通过 Set(LinearForwardingTable)这条 MAD 一条条下发到交换机的。
+
+#### 两类 SMP 路由:LID 路由 vs 直连路由
+
+最后把这个关键区别讲透。SM 发的子网管理报文(SMP)有两种路由方式:
+
+1. **LID 路由**:DLID 写目标 LID,交换机按转发表正常转发。这要求转发表已经建好、LID 已经分配。
+2. **直连路由(Directed Route)**:报文里显式带一条「端口路径」(Initial Path,一串出端口号),每经过一个交换机就按路径里的下一个端口号转发,不依赖转发表。
+
+直连路由在**拓扑还没发现、LID 还没分配**时是唯一能用的方式——因为这时转发表是空的。SM 正是靠直连路由的 SMP,一跳一跳地把整个子网摸清楚。这就是下一章的主题。
+
+![IB 数据报文格式](../images/21-ib-packet-format.png)
+
+![MAD 管理报文格式](../images/21-ib-mad.png)
+
+---
+
