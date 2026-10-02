@@ -1,0 +1,29 @@
+<mxfile host="app.diagrams.net"><diagram id="cf03vivy-se6e" name="Page-1"><mxGraphModel>
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="title" value="RDMA 用户态工具地图" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="250" y="20" width="300" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="ib" value="IB 原生" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="80" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="ib-tools" value="OpenSM&lt;br&gt;sminfo / smpquery / saquery&lt;br&gt;ibstat / ibnetdiscover / iblinkinfo&lt;br&gt;ibdiagnet / ibcheck* / perfquery" style="rounded=0;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;spacingLeft=8;html=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="130" width="200" height="110" as="geometry" />
+    </mxCell>
+    <mxCell id="perf" value="打流 / 性能" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="320" y="80" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="perf-tools" value="perftest:&lt;br&gt;ib_write_bw / ib_read_bw&lt;br&gt;ib_send_bw / ib_atomic_bw&lt;br&gt;对应 *_lat&lt;br&gt;qperf" style="rounded=0;fillColor=#ffffff;strokeColor=#82b366;align=left;spacingLeft=8;html=1;" vertex="1" parent="1">
+      <mxGeometry x="300" y="130" width="200" height="110" as="geometry" />
+    </mxCell>
+    <mxCell id="roce" value="RoCE / 通用 Linux" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="530" y="80" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="roce-tools" value="rdma link / rdma statistic&lt;br&gt;ibv_devices / ibv_devinfo&lt;br&gt;ip -s link / ethtool -S&lt;br&gt;/sys/class/infiniband/*/counters" style="rounded=0;fillColor=#ffffff;strokeColor=#d79b00;align=left;spacingLeft=8;html=1;" vertex="1" parent="1">
+      <mxGeometry x="510" y="130" width="220" height="110" as="geometry" />
+    </mxCell>
+    <mxCell id="capture" value="抓包 / 解码" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="320" y="252" width="160" height="40" as="geometry" /></mxCell>
+    <mxCell id="capture-tools" value="RoCEv2: UDP 4791&lt;br&gt;tcpdump / tshark / wireshark&lt;br&gt;识别 GRH / BTH&lt;br&gt;IB 原生抓包限制单独说明" style="rounded=0;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;html=1;" vertex="1" parent="1"><mxGeometry x="300" y="296" width="220" height="90" as="geometry" /></mxCell>
+  </root>
+</mxGraphModel></diagram></mxfile>
