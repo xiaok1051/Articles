@@ -23,7 +23,7 @@
     <mxCell id="roce-tools" value="rdma link / rdma statistic&lt;br&gt;ibv_devices / ibv_devinfo&lt;br&gt;ip -s link / ethtool -S&lt;br&gt;/sys/class/infiniband/*/counters" style="rounded=0;fillColor=#ffffff;strokeColor=#d79b00;align=left;spacingLeft=8;html=1;" vertex="1" parent="1">
       <mxGeometry x="510" y="130" width="220" height="110" as="geometry" />
     </mxCell>
-    <mxCell id="capture" value="抓包 / 解码" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="320" y="252" width="160" height="40" as="geometry" /></mxCell>
-    <mxCell id="capture-tools" value="RoCEv2: UDP 4791&lt;br&gt;tcpdump / tshark / wireshark&lt;br&gt;识别 GRH / BTH&lt;br&gt;IB 原生抓包限制单独说明" style="rounded=0;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;html=1;" vertex="1" parent="1"><mxGeometry x="300" y="296" width="220" height="90" as="geometry" /></mxCell>
+    <mxCell id="capture" value="抓包 / 解码" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="320" y="228" width="160" height="40" as="geometry" /></mxCell>
+    <mxCell id="capture-tools" value="RoCEv2: UDP 4791&lt;br&gt;tcpdump / tshark / wireshark&lt;br&gt;识别 GRH / BTH&lt;br&gt;IB 原生抓包限制单独说明" style="rounded=0;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;html=1;" vertex="1" parent="1"><mxGeometry x="300" y="272" width="220" height="90" as="geometry" /></mxCell>
   </root>
 </mxGraphModel></diagram></mxfile>

@@ -299,7 +299,7 @@ tshark -r roce.pcap -Y 'roce' -V
 | `ibdiagnet` | IB 诊断 | `ibutils2` | `ibdiagnet` | 链路速率/宽度、Symbol Error/BER | 子网体检 |
 | `ibping` / `ibtracert` | IB 诊断 | `infiniband-diags` | `ibping <lid>`、`ibtracert <src> <dst>` | 连通性、逐跳路径 | 连通性与路径 |
 | `perfquery` | IB 诊断 | `infiniband-diags` | `perfquery <lid> <port>` | Xmit/Rcv、discard、symbol error | 端口计数器 |
-| `dump_lfts` / `dump_mfts` | IB 诊断 | `infiniband-diags` | `dump_lfts`、`dump_mfts` | 交换机线性/组播转发表 | 转发表导出 |
+| `dump_lfts` / `dump_mfts` / `ibroute` | IB 诊断 | `infiniband-diags` | `dump_lfts`、`dump_mfts`、`ibroute <switch_lid>` | 交换机线性/组播转发表 | 转发表导出 |
 | `ib_write_bw` | 打流 | `perftest` | `ib_write_bw ... --report_gbits` | BW average、MsgRate | RDMA Write 带宽 |
 | `ib_write_lat` | 打流 | `perftest` | `ib_write_lat ...` | latency 分布 | RDMA Write 延迟 |
 | `qperf` | 打流 | `qperf` | `qperf -v <ip> rc_bw rc_lat` | bw/lat | 快速性能基线 |
