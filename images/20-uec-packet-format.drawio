@@ -1,1 +1,91 @@
-<mxfile host="app.diagrams.net"><diagram id="h7nnq893-xkz7" name="Page-1"><mxGraphModel dx="900" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="700" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="title" value="UET 报文结构:标准以太网帧 + 全新 UET 头" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" vertex="1" parent="1"><mxGeometry x="40" y="18" width="720" height="36" as="geometry"/></mxCell><mxCell id="eth" value="以太网头&lt;br&gt;(MAC / EtherType)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="70" width="330" height="55" as="geometry"/></mxCell><mxCell id="ip" value="网络层头&lt;br&gt;(视部署而定:IP 或 L2)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="133" width="330" height="55" as="geometry"/></mxCell><mxCell id="uet" value="&lt;b&gt;UET 头(传输层,本文重点)&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#b85450&quot;&gt;← 全新,替代 RoCE 的 BTH&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="196" width="330" height="150" as="geometry"/></mxCell><mxCell id="payload" value="负载(应用数据)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="354" width="330" height="55" as="geometry"/></mxCell><mxCell id="fcs" value="FCS(帧校验)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="417" width="330" height="45" as="geometry"/></mxCell><mxCell id="rtitle" value="UET 头要承载的 5 类信息" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="430" y="70" width="330" height="38" as="geometry"/></mxCell><mxCell id="f1" value="① 流 / 消息标识 —— 定位流,替代 QPN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacing=8;" vertex="1" parent="1"><mxGeometry x="430" y="116" width="330" height="44" as="geometry"/></mxCell><mxCell id="f2" value="② 序号 —— 乱序语义,选择性重传地基" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacing=8;" vertex="1" parent="1"><mxGeometry x="430" y="168" width="330" height="44" as="geometry"/></mxCell><mxCell id="f3" value="③ packetlet 切分 / 重组 —— 多路径切片" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacing=8;" vertex="1" parent="1"><mxGeometry x="430" y="220" width="330" height="44" as="geometry"/></mxCell><mxCell id="f4" value="④ 拥塞遥测 —— INT 带内队列 / 链路信息" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacing=8;" vertex="1" parent="1"><mxGeometry x="430" y="272" width="330" height="44" as="geometry"/></mxCell><mxCell id="f5" value="⑤ 校验 / 重传 —— 支撑 LLR 链路级重传" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacing=8;" vertex="1" parent="1"><mxGeometry x="430" y="324" width="330" height="44" as="geometry"/></mxCell><mxCell id="arrow" value="" style="endArrow=classic;html=1;strokeColor=#6c8ebf;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="370" y="271" as="sourcePoint"/><mxPoint x="430" y="89" as="targetPoint"/></mxGeometry></mxCell></root></mxGraphModel></diagram></mxfile>
+<mxfile host="embed.diagrams.net">
+  <diagram id="h7nnq893-xkz7" name="Page-1">
+    <mxGraphModel dx="1071" dy="721" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1060" pageHeight="760" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;fontSize=17;fontStyle=1;align=center;fontColor=#333333;" value="UET 报文格式(字段级):标准以太网帧 + UET 头逐字段" vertex="1">
+          <mxGeometry height="30" width="1020" x="20" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="eth_label" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#999999;fontSize=13;fontStyle=1;verticalAlign=middle;" value="以太网头" vertex="1">
+          <mxGeometry height="52" width="100" x="20" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="eth_dst" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" value="MAC 目的地址&lt;br&gt;48 bit" vertex="1">
+          <mxGeometry height="52" width="250" x="130" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="eth_src" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" value="MAC 源地址&lt;br&gt;48 bit" vertex="1">
+          <mxGeometry height="52" width="250" x="388" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="eth_vlan" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=12;dashed=1;" value="VLAN Tag(可选)&lt;br&gt;32 bit" vertex="1">
+          <mxGeometry height="52" width="180" x="646" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="eth_type" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" value="EtherType&lt;br&gt;16 bit" vertex="1">
+          <mxGeometry height="52" width="206" x="834" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="ip_label" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#999999;fontSize=13;fontStyle=1;verticalAlign=middle;" value="网络层头" vertex="1">
+          <mxGeometry height="64" width="100" x="20" y="116" as="geometry" />
+        </mxCell>
+        <mxCell id="ip_hdr" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" value="IP 头(仅 IP 部署)&lt;br&gt;20 字节" vertex="1">
+          <mxGeometry height="64" width="250" x="130" y="116" as="geometry" />
+        </mxCell>
+        <mxCell id="udp_hdr" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" value="UDP 头&lt;br&gt;源端口 = entropy(16b)&lt;br&gt;目的端口 16b · 长度 16b · 校验 16b" vertex="1">
+          <mxGeometry height="64" width="330" x="388" y="116" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_note" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=12;dashed=1;" value="或 L2 部署:无 IP/UDP&lt;br&gt;直连 UET 头" vertex="1">
+          <mxGeometry height="64" width="314" x="726" y="116" as="geometry" />
+        </mxCell>
+        <mxCell id="uet_label" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;fontColor=#ffffff;verticalAlign=middle;" value="UET 头&lt;br&gt;(本文重点)" vertex="1">
+          <mxGeometry height="150" width="100" x="20" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="flags" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[通用] Flags&lt;br&gt;8 bit&lt;br&gt;SYN · ACK · NACK · FIN" vertex="1">
+          <mxGeometry height="46" width="235" x="130" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="dmode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[PDS] Delivery Mode&lt;br&gt;RUD · ROD · RUDI · UUD" vertex="1">
+          <mxGeometry height="46" width="265" x="373" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="cong" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[CMS] Congestion&lt;br&gt;拥塞遥测(INT)" vertex="1">
+          <mxGeometry height="46" width="240" x="646" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="hlen" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[通用] Hdr/Payload Len&lt;br&gt;头长 · 负载长" vertex="1">
+          <mxGeometry height="46" width="146" x="894" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="psn" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[PDS] PSN 包序号&lt;br&gt;Packet Seq Num&lt;br&gt;乱序 · 选择性重传地基" vertex="1">
+          <mxGeometry height="46" width="300" x="130" y="242" as="geometry" />
+        </mxCell>
+        <mxCell id="rsn" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[PDS] RSN 接收序号&lt;br&gt;Receiver Seq Num&lt;br&gt;接收窗口 / ACK·NACK" vertex="1">
+          <mxGeometry height="46" width="300" x="438" y="242" as="geometry" />
+        </mxCell>
+        <mxCell id="pdc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[PDS] PDC(可选)&lt;br&gt;包交付上下文&lt;br&gt;RUD / ROD 用" vertex="1">
+          <mxGeometry height="46" width="294" x="746" y="242" as="geometry" />
+        </mxCell>
+        <mxCell id="msn" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[SES] MSN 消息序号&lt;br&gt;Message Seq Num&lt;br&gt;定位消息" vertex="1">
+          <mxGeometry height="46" width="300" x="130" y="296" as="geometry" />
+        </mxCell>
+        <mxCell id="moff" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[SES] Message Offset&lt;br&gt;消息内偏移&lt;br&gt;packetlet 重组" vertex="1">
+          <mxGeometry height="46" width="300" x="438" y="296" as="geometry" />
+        </mxCell>
+        <mxCell id="opc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="[SES] OpCode&lt;br&gt;操作类型&lt;br&gt;RMA / 原子 / 消息" vertex="1">
+          <mxGeometry height="46" width="294" x="746" y="296" as="geometry" />
+        </mxCell>
+        <mxCell id="payload_label" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#999999;fontSize=13;fontStyle=1;verticalAlign=middle;" value="负载" vertex="1">
+          <mxGeometry height="48" width="100" x="20" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="payload" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" value="负载(应用数据 payload)" vertex="1">
+          <mxGeometry height="48" width="910" x="130" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="fcs_label" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#999999;fontSize=13;fontStyle=1;verticalAlign=middle;" value="FCS" vertex="1">
+          <mxGeometry height="42" width="100" x="20" y="406" as="geometry" />
+        </mxCell>
+        <mxCell id="fcs" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" value="FCS&lt;br&gt;32 bit" vertex="1">
+          <mxGeometry height="42" width="910" x="130" y="406" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_title" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;align=left;spacingLeft=10;" value="UET 头字段 → 支撑的机制(对应 4.2 五类信息)" vertex="1">
+          <mxGeometry height="34" width="1020" x="20" y="462" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_body" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=10;verticalAlign=top;" value="Flags → 控制位(SYN / ACK / NACK / FIN)—— 第 5 类:校验与重传相关&lt;br&gt;Delivery Mode → 交付模式:RUD 可靠乱序 / ROD 可靠有序 / RUDI 幂等 / UUD 不可靠&lt;br&gt;Congestion → 拥塞遥测(INT)—— 第 4 类:主动拥塞控制信号(第 8 章)&lt;br&gt;MSN → 消息序号 —— 第 1 类:流/消息标识(替代 QPN 的定位角色)&lt;br&gt;PSN → 包序号 —— 第 2 类:序号(乱序语义),选择性重传地基&lt;br&gt;RSN → 接收序号 —— 接收窗口 / ACK·NACK 状态&lt;br&gt;Message Offset → 消息内偏移 —— 第 3 类:packetlet 切分 / 重组&lt;br&gt;PDC → 包交付上下文(RUD / ROD 用;UUD / RUDI 无此字段,头更小)&lt;br&gt;&lt;br&gt;字段名/位宽依据 UEC 1.0 规范,具体编码以规范原文为准。UET 头内部为 next-header 链:加密头(可选,TSS)→ 可靠性头(PDS)→ 语义头(SES),拥塞字段归 CMS。" vertex="1">
+          <mxGeometry height="166" width="1020" x="20" y="504" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

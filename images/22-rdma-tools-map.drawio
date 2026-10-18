@@ -1,29 +1,40 @@
-<mxfile host="app.diagrams.net"><diagram id="cf03vivy-se6e" name="Page-1"><mxGraphModel>
-  <root>
-    <mxCell id="0" />
-    <mxCell id="1" parent="0" />
-    <mxCell id="title" value="RDMA 用户态工具地图" style="text;html=1;fontSize=20;fontStyle=1;align=center;" vertex="1" parent="1">
-      <mxGeometry x="250" y="20" width="300" height="30" as="geometry" />
-    </mxCell>
-    <mxCell id="ib" value="IB 原生" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
-      <mxGeometry x="60" y="80" width="160" height="40" as="geometry" />
-    </mxCell>
-    <mxCell id="ib-tools" value="OpenSM&lt;br&gt;sminfo / smpquery / saquery&lt;br&gt;ibstat / ibnetdiscover / iblinkinfo&lt;br&gt;ibdiagnet / ibcheck* / perfquery" style="rounded=0;fillColor=#ffffff;strokeColor=#6c8ebf;align=left;spacingLeft=8;html=1;" vertex="1" parent="1">
-      <mxGeometry x="40" y="130" width="200" height="110" as="geometry" />
-    </mxCell>
-    <mxCell id="perf" value="打流 / 性能" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
-      <mxGeometry x="320" y="80" width="160" height="40" as="geometry" />
-    </mxCell>
-    <mxCell id="perf-tools" value="perftest:&lt;br&gt;ib_write_bw / ib_read_bw&lt;br&gt;ib_send_bw / ib_atomic_bw&lt;br&gt;对应 *_lat&lt;br&gt;qperf" style="rounded=0;fillColor=#ffffff;strokeColor=#82b366;align=left;spacingLeft=8;html=1;" vertex="1" parent="1">
-      <mxGeometry x="300" y="130" width="200" height="110" as="geometry" />
-    </mxCell>
-    <mxCell id="roce" value="RoCE / 通用 Linux" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
-      <mxGeometry x="530" y="80" width="160" height="40" as="geometry" />
-    </mxCell>
-    <mxCell id="roce-tools" value="rdma link / rdma statistic&lt;br&gt;ibv_devices / ibv_devinfo&lt;br&gt;ip -s link / ethtool -S&lt;br&gt;/sys/class/infiniband/*/counters" style="rounded=0;fillColor=#ffffff;strokeColor=#d79b00;align=left;spacingLeft=8;html=1;" vertex="1" parent="1">
-      <mxGeometry x="510" y="130" width="220" height="110" as="geometry" />
-    </mxCell>
-    <mxCell id="capture" value="抓包 / 解码" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="320" y="228" width="160" height="40" as="geometry" /></mxCell>
-    <mxCell id="capture-tools" value="RoCEv2: UDP 4791&lt;br&gt;tcpdump / tshark / wireshark&lt;br&gt;识别 GRH / BTH&lt;br&gt;IB 原生抓包限制单独说明" style="rounded=0;fillColor=#ffffff;strokeColor=#9673a6;align=left;spacingLeft=8;html=1;" vertex="1" parent="1"><mxGeometry x="300" y="272" width="220" height="90" as="geometry" /></mxCell>
-  </root>
-</mxGraphModel></diagram></mxfile>
+<mxfile host="app.diagrams.net">
+  <diagram id="tools-map" name="Page-1">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="RDMA 用户态工具地图" style="text;html=1;fontSize=22;fontStyle=1;align=center;fontColor=#1a1a1a;" vertex="1" parent="1">
+          <mxGeometry x="200" y="16" width="400" height="32" as="geometry"/>
+        </mxCell>
+        <mxCell id="c1" value="IB 原生工具" style="swimlane;rounded=1;arcSize=5;shadow=1;fillColor=#dae8fc;strokeColor=#6c8ebf;swimlaneFillColor=#ffffff;fontStyle=1;fontSize=14;startSize=34;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="64" width="350" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="c1t" value="拓扑查询：ibstat · ibnetdiscover · iblinkinfo&lt;br&gt;子网管理：opensm&lt;br&gt;SM/SA 查询：sminfo · smpquery · saquery&lt;br&gt;诊断：ibdiagnet · ibcheck* · ibping · ibtracert&lt;br&gt;计数器：perfquery&lt;br&gt;转发表：dump_lfts / dump_mfts · ibroute" style="text;html=1;fontSize=12;align=left;verticalAlign=top;fontColor=#333333;" vertex="1" parent="c1">
+          <mxGeometry x="14" y="44" width="322" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="c2" value="打流 / 性能" style="swimlane;rounded=1;arcSize=5;shadow=1;fillColor=#d5e8d4;strokeColor=#82b366;swimlaneFillColor=#ffffff;fontStyle=1;fontSize=14;startSize=34;html=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="64" width="350" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="c2t" value="ib_write_bw · ib_read_bw（带宽）&lt;br&gt;ib_send_bw · ib_atomic_bw（带宽）&lt;br&gt;ib_write_lat 等 *_lat 系列（延迟）&lt;br&gt;qperf（快速性能基线）" style="text;html=1;fontSize=12;align=left;verticalAlign=top;fontColor=#333333;" vertex="1" parent="c2">
+          <mxGeometry x="14" y="44" width="322" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="c3" value="RoCE / 通用 Linux" style="swimlane;rounded=1;arcSize=5;shadow=1;fillColor=#ffe6cc;strokeColor=#d79b00;swimlaneFillColor=#ffffff;fontStyle=1;fontSize=14;startSize=34;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="278" width="350" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="c3t" value="rdma link / rdma statistic（链路视角）&lt;br&gt;ibv_devices / ibv_devinfo（verbs 查询）&lt;br&gt;ethtool -S / ip -s link（网卡计数器）&lt;br&gt;sysfs：/sys/class/infiniband/*/counters" style="text;html=1;fontSize=12;align=left;verticalAlign=top;fontColor=#333333;" vertex="1" parent="c3">
+          <mxGeometry x="14" y="44" width="322" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="c4" value="抓包 / 解码" style="swimlane;rounded=1;arcSize=5;shadow=1;fillColor=#e1d5e7;strokeColor=#9673a6;swimlaneFillColor=#ffffff;fontStyle=1;fontSize=14;startSize=34;html=1;" vertex="1" parent="c4">
+          <mxGeometry x="420" y="278" width="350" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="c4t" value="RoCEv2 报文：UDP 4791&lt;br&gt;tcpdump / tshark / wireshark&lt;br&gt;识别 GRH / BTH、QP、PSN 与重传&lt;br&gt;IB 原生报文不适用以太网抓包" style="text;html=1;fontSize=12;align=left;verticalAlign=top;fontColor=#333333;" vertex="1" parent="c4">
+          <mxGeometry x="14" y="44" width="322" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer" value="命令基线：Linux + rdma-core 生态；IB 原生工具依赖 SM 组建的子网" style="text;html=1;fontSize=11;align=center;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="150" y="480" width="500" height="22" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

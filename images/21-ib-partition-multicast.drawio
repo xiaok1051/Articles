@@ -1,93 +1,76 @@
-<mxfile host="app.diagrams.net">
-  <diagram id="21-ib-partition-multicast" name="分区+组播">
-    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="720" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-
-        <mxCell id="title" value="P_Key 分区隔离 + MGID→MLID→MFT 组播" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#1a1a1a;" vertex="1" parent="1">
-          <mxGeometry x="300" y="20" width="600" height="40" as="geometry"/>
-        </mxCell>
-
-        <!-- ============ 左半:分区 ============ -->
-        <mxCell id="left-title" value="① 分区 Partition（P_Key 逻辑隔离）" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#b45309;" vertex="1" parent="1">
-          <mxGeometry x="40" y="80" width="520" height="30" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="host-a1" value="HCA A&#10;P_Key=0x8001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="140" width="140" height="70" as="geometry"/>
-        </mxCell>
-        <mxCell id="host-a2" value="HCA B&#10;P_Key=0x8001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="280" width="140" height="70" as="geometry"/>
-        </mxCell>
-        <mxCell id="host-b1" value="HCA C&#10;P_Key=0x8002" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="420" width="140" height="70" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="switch-p" value="交换机&#10;P_Key 表" style="shape=process;whiteSpace=wrap;html=1;fillColor=#e5e7eb;strokeColor=#374151;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="330" y="210" width="120" height="200" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="e-a1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d97706;endArrow=block;endFill=1;" edge="1" parent="1" source="host-a1" target="switch-p">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e-a2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d97706;endArrow=block;endFill=1;" edge="1" parent="1" source="host-a2" target="switch-p">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e-b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563eb;endArrow=block;endFill=1;" edge="1" parent="1" source="host-b1" target="switch-p">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="note-partition" value="P_Key=0x8001 的分区成员彼此互通；&#10;P_Key=0x8002 的 HCA C 与 A/B 互不可见&#10;（即使同在一个物理子网）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#ea580c;fontSize=12;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="540" width="390" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- ============ 右半:组播 ============ -->
-        <mxCell id="right-title" value="② 组播（MGID → MLID → MFT）" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#047857;" vertex="1" parent="1">
-          <mxGeometry x="640" y="80" width="520" height="30" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="mgid" value="MGID（多播组标识）&#10;128-bit GID，由应用/SA 定义" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="640" y="140" width="220" height="70" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="mlid" value="MLID（多播 LID）&#10;16-bit，由 SA 分配" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="640" y="260" width="220" height="70" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="mft" value="MFT（多播转发表）&#10;MLID → 端口掩码" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="640" y="380" width="220" height="70" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="ports" value="出端口集合&#10;{ 2, 3, 7 }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="640" y="500" width="220" height="70" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="e-mgid-mlid" style="rounded=0;html=1;strokeColor=#059669;endArrow=block;endFill=1;" edge="1" parent="1" source="mgid" target="mlid">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e-mlid-mft" style="rounded=0;html=1;strokeColor=#059669;endArrow=block;endFill=1;" edge="1" parent="1" source="mlid" target="mft">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e-mft-ports" style="rounded=0;html=1;strokeColor=#059669;endArrow=block;endFill=1;" edge="1" parent="1" source="mft" target="ports">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lbl-mgid" value="SA 解析" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#047857;fontStyle=2;" vertex="1" parent="1">
-          <mxGeometry x="870" y="200" width="80" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl-mlid" value="SM 下发" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#047857;fontStyle=2;" vertex="1" parent="1">
-          <mxGeometry x="870" y="320" width="80" height="20" as="geometry"/>
-        </mxCell>
-        <mxCell id="lbl-mft" value="查表复制" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#047857;fontStyle=2;" vertex="1" parent="1">
-          <mxGeometry x="870" y="440" width="80" height="20" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="note-mcast" value="集合通信（MPI barrier/广播）借助组播：&#10;报文只发一份，交换机按 MFT 复制到各成员端口" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669;fontSize=12;dashed=1;" vertex="1" parent="1">
-          <mxGeometry x="640" y="600" width="520" height="50" as="geometry"/>
-        </mxCell>
-
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram id="21-ib-partition-multicast" name="分区+组播">
+        <mxGraphModel dx="1037" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="720" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="P_Key 分区隔离 + MGID→MLID→MFT 组播" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#1a1a1a;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="50" width="550" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="left-title" value="① 分区 Partition（P_Key 逻辑隔离）" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#b45309;" parent="1" vertex="1">
+                    <mxGeometry x="79" y="110" width="330" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="host-a1" value="HCA A&#xa;P_Key=0x8001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="79" y="172" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="host-a2" value="HCA B&#xa;P_Key=0x8001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="79" y="280" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="host-b1" value="HCA C&#xa;P_Key=0x8002" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="79" y="377" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="switch-p" value="交换机&#xa;P_Key 表" style="shape=process;whiteSpace=wrap;html=1;fillColor=#e5e7eb;strokeColor=#374151;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="283" y="180" width="120" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-a1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d97706;endArrow=block;endFill=1;" parent="1" source="host-a1" target="switch-p" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-a2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#d97706;endArrow=block;endFill=1;" parent="1" source="host-a2" target="switch-p" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#2563eb;endArrow=block;endFill=1;" parent="1" source="host-b1" target="switch-p" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="note-partition" value="P_Key=0x8001 的分区成员彼此互通；&#xa;P_Key=0x8002 的 HCA C 与 A/B 互不可见&#xa;（即使同在一个物理子网）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#ea580c;fontSize=12;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="79" y="465" width="310" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="right-title" value="② 组播（MGID → MLID → MFT）" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#047857;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="110" width="310" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mgid" value="MGID（多播组标识）&#xa;128-bit GID，由应用/SA 定义" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="170" width="220" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="mlid" value="MLID（多播 LID）&#xa;16-bit，由 SA 分配" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="275" width="220" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="mft" value="MFT（多播转发表）&#xa;MLID → 端口掩码" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="383" width="220" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="ports" value="出端口集合&#xa;{ 2, 3, 7 }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1fae5;strokeColor=#059669;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="492" width="220" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-mgid-mlid" style="rounded=0;html=1;strokeColor=#059669;endArrow=block;endFill=1;" parent="1" source="mgid" target="mlid" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-mlid-mft" style="rounded=0;html=1;strokeColor=#059669;endArrow=block;endFill=1;" parent="1" source="mlid" target="mft" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-mft-ports" style="rounded=0;html=1;strokeColor=#059669;endArrow=block;endFill=1;" parent="1" source="mft" target="ports" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl-mgid" value="SA 解析" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#047857;fontStyle=2;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="218" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl-mlid" value="SM 下发" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#047857;fontStyle=2;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="317" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lbl-mft" value="查表复制" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#047857;fontStyle=2;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="423" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="note-mcast" value="集合通信（MPI barrier/广播）借助组播：&#xa;报文只发一份，交换机按 MFT 复制到各成员端口" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669;fontSize=12;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="443" y="590" width="315" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>

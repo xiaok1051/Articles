@@ -1,1 +1,73 @@
-<mxfile host="app.diagrams.net"><diagram id="zgtza37m-81yj" name="Page-1"><mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="IB 报文转发:LID → LFT → 出端口" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1"><mxGeometry x="40" y="10" width="720" height="32" as="geometry"/></mxCell><mxCell id="3" value="报文进入&#10;DLID = 0x0012" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=13;" vertex="1" parent="1"><mxGeometry x="40" y="65" width="150" height="80" as="geometry"/></mxCell><mxCell id="4" value="交换机&#10;读 DLID → 查 LFT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=13;" vertex="1" parent="1"><mxGeometry x="250" y="55" width="250" height="100" as="geometry"/></mxCell><mxCell id="5" value="从端口 5 发出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=13;" vertex="1" parent="1"><mxGeometry x="560" y="65" width="150" height="80" as="geometry"/></mxCell><mxCell id="10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666666;endArrow=block;" edge="1" parent="1" source="3" target="4"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666666;endArrow=block;" edge="1" parent="1" source="4" target="5"><mxGeometry relative="1" as="geometry"/></mxCell><mxCell id="20" value="LFT 线性转发表(单播)" style="text;html=1;fontSize=14;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="40" y="185" width="280" height="24" as="geometry"/></mxCell><mxCell id="21" value="LID" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="214" width="120" height="30" as="geometry"/></mxCell><mxCell id="22" value="端口" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="160" y="214" width="80" height="30" as="geometry"/></mxCell><mxCell id="23" value="0x0010" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=12;" vertex="1" parent="1"><mxGeometry x="40" y="244" width="120" height="30" as="geometry"/></mxCell><mxCell id="24" value="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=12;" vertex="1" parent="1"><mxGeometry x="160" y="244" width="80" height="30" as="geometry"/></mxCell><mxCell id="25" value="0x0012" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="40" y="274" width="120" height="30" as="geometry"/></mxCell><mxCell id="26" value="5" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="160" y="274" width="80" height="30" as="geometry"/></mxCell><mxCell id="27" value="0x0013" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=12;" vertex="1" parent="1"><mxGeometry x="40" y="304" width="120" height="30" as="geometry"/></mxCell><mxCell id="28" value="3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=12;" vertex="1" parent="1"><mxGeometry x="160" y="304" width="80" height="30" as="geometry"/></mxCell><mxCell id="30" value="MFT 多播转发表(多播)" style="text;html=1;fontSize=14;fontStyle=1;align=left;" vertex="1" parent="1"><mxGeometry x="350" y="185" width="280" height="24" as="geometry"/></mxCell><mxCell id="31" value="MLID" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="350" y="214" width="120" height="30" as="geometry"/></mxCell><mxCell id="32" value="端口掩码" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="470" y="214" width="150" height="30" as="geometry"/></mxCell><mxCell id="33" value="0xC000" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="350" y="244" width="120" height="30" as="geometry"/></mxCell><mxCell id="34" value="{2, 3, 7}" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="470" y="244" width="150" height="30" as="geometry"/></mxCell><mxCell id="40" value="单播查 LFT 得一个端口 · 多播查 MFT 得一组端口(复制转发)" style="text;html=1;fontSize=12;fontColor=#555555;align=left;" vertex="1" parent="1"><mxGeometry x="40" y="352" width="680" height="24" as="geometry"/></mxCell></root></mxGraphModel></diagram></mxfile>
+<mxfile host="65bd71144e">
+    <diagram id="zgtza37m-81yj" name="Page-1">
+        <mxGraphModel dx="899" dy="688" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="IB 报文转发:LID → LFT → 出端口" style="text;html=1;fontSize=18;fontStyle=1;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="20" width="470" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="报文进入&#xa;DLID = 0x0012" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="59" y="70" width="140" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="交换机&#xa;读 DLID → 查 LFT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="70" width="150" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="从端口 5 发出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#43A047;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="453" y="70" width="131" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666666;endArrow=block;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#666666;endArrow=block;" parent="1" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="LFT 线性转发表(单播)" style="text;html=1;fontSize=14;fontStyle=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="62" y="163" width="180" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="LID" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="62" y="192" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="端口" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="182" y="192" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="0x0010" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="62" y="222" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="182" y="222" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="0x0012" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="62" y="252" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="5" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="182" y="252" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="0x0013" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="62" y="282" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="182" y="282" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="MFT 多播转发表(多播)" style="text;html=1;fontSize=14;fontStyle=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="315" y="166" width="205" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="MLID" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="315" y="195" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="端口掩码" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#90CAF9;strokeColor=#1565C0;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="435" y="195" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="0xC000" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="315" y="225" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="{2, 3, 7}" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FB8C00;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="435" y="225" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="单播查 LFT 得一个端口 · 多播查 MFT 得一组端口(复制转发)" style="text;html=1;fontSize=12;fontColor=#555555;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="333" width="380" height="24" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
