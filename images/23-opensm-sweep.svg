@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="827" height="620" viewBox="0 0 827 620" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="827" height="620" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#666666"/>
+    </marker>
+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#888888"/>
+    </marker>
+  </defs>
+
+  <!-- 标题 -->
+  <text x="413" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">SM sweep：拓扑扫描（DR SMP 逐跳展开）</text>
+
+  <!-- SM -->
+  <rect x="40" y="90" width="180" height="72" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="130" y="120" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a1a">SM（子网管理器）</text>
+  <text x="130" y="144" text-anchor="middle" font-size="12" fill="#333333">绑定自身 HCA 端口</text>
+
+  <!-- 交换机 A（直连邻居） -->
+  <rect x="360" y="90" width="180" height="72" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="450" y="120" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a1a">交换机 A</text>
+  <text x="450" y="144" text-anchor="middle" font-size="12" fill="#333333">直连邻居</text>
+
+  <!-- port 0 管理通道说明（黄色旁注） -->
+  <rect x="600" y="66" width="187" height="112" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
+  <text x="693" y="92" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">port 0 = 管理通道</text>
+  <text x="693" y="114" text-anchor="middle" font-size="11" fill="#333333">SMP 访问交换机本身时，</text>
+  <text x="693" y="132" text-anchor="middle" font-size="11" fill="#333333">DR 路径以 port 0 收尾</text>
+  <text x="693" y="156" text-anchor="middle" font-size="11" fill="#888888">（不对外的内部端口）</text>
+
+  <!-- 交换机 B -->
+  <rect x="360" y="250" width="180" height="60" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="450" y="284" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a1a">交换机 B</text>
+
+  <!-- 交换机 C -->
+  <rect x="600" y="250" width="180" height="60" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="690" y="284" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a1a">交换机 C</text>
+
+  <!-- HCA 端节点 -->
+  <rect x="360" y="380" width="180" height="56" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"/>
+  <text x="450" y="412" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a1a">HCA（端节点）</text>
+
+  <rect x="600" y="380" width="180" height="56" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"/>
+  <text x="690" y="412" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a1a">HCA（端节点）</text>
+
+  <!-- 底部图例：每步读回的信息 -->
+  <rect x="40" y="500" width="747" height="100" rx="8" ry="8" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="413" y="522" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a1a">每步读回信息，据此建立拓扑树</text>
+  <text x="413" y="546" text-anchor="middle" font-size="12" fill="#333333">NodeInfo — 节点类型 / GUID</text>
+  <text x="413" y="568" text-anchor="middle" font-size="12" fill="#333333">PortInfo — 端口状态 / 速率 / 宽度</text>
+  <text x="413" y="590" text-anchor="middle" font-size="12" fill="#333333">SwitchInfo — LFT 容量 · 内存结构：子网 → 节点 → 端口 → 交换机</text>
+
+  <!-- 箭头：SM -> 交换机 A -->
+  <line x1="220" y1="126" x2="358" y2="126" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="289" y="110" text-anchor="middle" font-size="12" fill="#555555">DR SMP（定向路由）</text>
+  <text x="289" y="150" text-anchor="middle" font-size="12" fill="#555555">携带逐跳端口序列</text>
+
+  <!-- 虚线：port 0 旁注指向交换机 A -->
+  <line x1="600" y1="130" x2="542" y2="130" stroke="#888888" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-grey)"/>
+
+  <!-- 箭头：交换机 A -> 交换机 B -->
+  <line x1="450" y1="162" x2="450" y2="248" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="462" y="209" font-size="12" fill="#555555">经各物理端口继续深入</text>
+
+  <!-- 箭头：交换机 A -> 交换机 C -->
+  <line x1="540" y1="162" x2="690" y2="248" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="618" y="198" text-anchor="middle" font-size="12" fill="#555555">继续深入</text>
+
+  <!-- 箭头：交换机 B -> HCA -->
+  <line x1="450" y1="310" x2="450" y2="378" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="462" y="348" font-size="12" fill="#555555">物理端口</text>
+
+  <!-- 箭头：交换机 C -> HCA -->
+  <line x1="690" y1="310" x2="690" y2="378" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="702" y="348" font-size="12" fill="#555555">物理端口</text>
+</svg>
