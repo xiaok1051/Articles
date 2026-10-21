@@ -49,6 +49,27 @@ OpenSM 是 IB 生态里最主流的开源子网管理器（Subnet Manager），�
 
 ### 2.1 启动与状态机
 
+SM 状态机是 OpenSM 的灵魂。一个子网里可能同时跑着多台 SM，但任意时刻只允许有一个 master 在管——谁当 master、谁退居二线、谁在失效之后顶上，全由这张状态机驱动。它只有四个状态，正好对应 IB 规范里 SMInfo 的 SM_State 字段定义的取值：
+
+- **NotActive**（未激活）：SM 尚未接管子网，处于初始或已让位状态。
+- **Discovering**（发现态）：启动后进入，先扫一遍拓扑，把子网里的节点、端口、交换机摸清楚（扫描细节留到 2.2）。
+- **Master**（主状态）：SM 赢得选举，成为子网唯一主管理器，进入稳态持续服务——LID 分配、路由计算、LFT 下发都在这个状态下进行。
+- **Standby**（备用态）：子网里已有更高优先级的 master，本 SM 退居备用，只定时轮询 master 是否还活着。
+
+状态迁移的主线只有五条：
+
+1. **启动 → Discovering**：SM 起来后先进入发现态，扫一遍拓扑。
+2. **Discovering → Master**：扫完拓扑后，若子网里没有比它优先级更高的 SM，就赢得选举、成为 master。
+3. **Discovering → Standby**：若发现已有更高优先级的 master，就退居备用。
+4. **Standby → Discovering**：备用期间轮询 master 超时，认为 master 已失效，就重新进入 Discovering 再次尝试接管——这就是 failover 机制。
+5. **Master → NotActive**：主动让位或被降级（比如又出现一个优先级更高的 SM），退出 master。
+
+这里的「选举」并非投票，而是一次探测加比较：SM 通过 SMInfo 属性探测子网里是否已经存在 master，再比较各自的优先级 `sm_priority`——优先级更高者当 master。这也解释了为什么一个子网里即便同时启动多台 OpenSM，最终也只有一台停在 Master 态。
+
+下图是这四个状态及其迁移：
+
+![SM 状态机](../images/23-opensm-sm-state.png)
+
 ### 2.2 拓扑发现
 
 ### 2.3 LID 与路由

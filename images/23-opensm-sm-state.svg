@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="827" height="620" viewBox="0 0 827 620" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="827" height="620" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#666666"/>
+    </marker>
+  </defs>
+
+  <!-- 标题 -->
+  <text x="413" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">SM 状态机（SMInfo.SM_State）</text>
+
+  <!-- 迁移箭头（先画，让方框盖住箭头末端） -->
+
+  <!-- 启动：NotActive -> Discovering -->
+  <line x1="413" y1="490" x2="413" y2="140" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="423" y="320" font-size="12" fill="#555555">启动</text>
+
+  <!-- 无更高优先级 SM：Discovering -> Master -->
+  <line x1="313" y1="115" x2="274" y2="318" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="275" y="205" text-anchor="middle" font-size="12" fill="#555555">无更高优先级 SM</text>
+
+  <!-- 发现更高优先级 master：Discovering -> Standby -->
+  <line x1="513" y1="115" x2="555" y2="318" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="516" y="178" font-size="12" fill="#555555">发现更高优先级 master</text>
+
+  <!-- 轮询超时（failover）：Standby -> Discovering -->
+  <line x1="610" y1="290" x2="480" y2="140" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="562" y="240" font-size="12" fill="#555555">轮询超时（failover）</text>
+
+  <!-- 让位/降级：Master -> NotActive -->
+  <line x1="195" y1="356" x2="350" y2="490" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="275" y="430" text-anchor="middle" font-size="12" fill="#555555">让位 / 降级</text>
+
+  <!-- Discovering -->
+  <rect x="313" y="70" width="200" height="66" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="413" y="100" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Discovering</text>
+  <text x="413" y="124" text-anchor="middle" font-size="12" fill="#333333">发现态 · 扫描拓扑</text>
+
+  <!-- Master（稳态，绿色高亮） -->
+  <rect x="70" y="290" width="200" height="66" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="170" y="320" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Master</text>
+  <text x="170" y="342" text-anchor="middle" font-size="12" fill="#333333">主状态 · 稳态</text>
+
+  <!-- Standby -->
+  <rect x="557" y="290" width="200" height="66" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="657" y="320" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Standby</text>
+  <text x="657" y="342" text-anchor="middle" font-size="12" fill="#333333">备用态 · 轮询 master</text>
+
+  <!-- NotActive -->
+  <rect x="313" y="490" width="200" height="66" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="413" y="520" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">NotActive</text>
+  <text x="413" y="542" text-anchor="middle" font-size="12" fill="#333333">未激活 · 未接管</text>
+</svg>
