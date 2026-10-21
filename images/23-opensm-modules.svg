@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="827" height="620" viewBox="0 0 827 620" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="827" height="620" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#666666"/>
+    </marker>
+    <marker id="arrow-dash" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#888888"/>
+    </marker>
+  </defs>
+
+  <!-- 标题 -->
+  <text x="413" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">OpenSM 模块全景</text>
+
+  <!-- osm_opensm 主循环 -->
+  <rect x="160" y="52" width="300" height="56" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="310" y="86" text-anchor="middle" font-size="17" font-weight="bold" fill="#1a1a1a">osm_opensm（主循环）</text>
+
+  <!-- 状态机 -->
+  <rect x="160" y="150" width="300" height="72" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="310" y="182" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a1a">状态机</text>
+  <text x="310" y="203" text-anchor="middle" font-size="12" fill="#333333">osm_sm · osm_sm_state_mgr</text>
+
+  <!-- 拓扑数据模型 -->
+  <rect x="130" y="270" width="360" height="96" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="310" y="300" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a1a">拓扑数据模型</text>
+  <text x="310" y="324" text-anchor="middle" font-size="12" fill="#333333">osm_subnet · osm_node</text>
+  <text x="310" y="346" text-anchor="middle" font-size="12" fill="#333333">osm_port · osm_switch</text>
+
+  <!-- LID / 路由 / LFT -->
+  <rect x="130" y="410" width="360" height="90" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="310" y="438" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a1a">LID / 路由 / LFT 管理器</text>
+  <text x="310" y="460" text-anchor="middle" font-size="12" fill="#333333">osm_lid_mgr · osm_ucast_mgr</text>
+  <text x="310" y="482" text-anchor="middle" font-size="12" fill="#333333">osm_lin_fwd_rcv</text>
+
+  <!-- libvendor -->
+  <rect x="40" y="548" width="747" height="52" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"/>
+  <text x="413" y="572" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a1a">libvendor（MAD 收发）</text>
+  <text x="413" y="591" text-anchor="middle" font-size="11" fill="#333333">osm_vendor_ibumad.c</text>
+
+  <!-- SA -->
+  <rect x="560" y="52" width="227" height="72" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
+  <text x="673" y="82" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a1a">SA（子网管理服务）</text>
+  <text x="673" y="104" text-anchor="middle" font-size="11" fill="#333333">osm_sa · osm_sa_*_record</text>
+
+  <!-- QoS / 分区 / 组播 / 拥塞控制 -->
+  <rect x="560" y="170" width="227" height="210" rx="8" ry="8" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="673" y="198" text-anchor="middle" font-size="14" font-weight="bold" fill="#555555">QoS / 分区 / 组播 / 拥塞控制</text>
+  <text x="673" y="220" text-anchor="middle" font-size="12" fill="#888888">（本文不展开）</text>
+  <text x="673" y="252" text-anchor="middle" font-size="11" fill="#666666">QoS · osm_qos.c</text>
+  <text x="673" y="276" text-anchor="middle" font-size="11" fill="#666666">分区 · osm_pkey.c</text>
+  <text x="673" y="300" text-anchor="middle" font-size="11" fill="#666666">组播 · osm_mcast_mgr.c</text>
+  <text x="673" y="324" text-anchor="middle" font-size="11" fill="#666666">拥塞控制 · osm_congestion_control.c</text>
+
+  <!-- 核心闭环箭头 -->
+  <line x1="310" y1="108" x2="310" y2="148" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="320" y="132" font-size="12" fill="#555555">驱动</text>
+
+  <line x1="310" y1="222" x2="310" y2="268" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="320" y="249" font-size="12" fill="#555555">填充拓扑</text>
+
+  <line x1="310" y1="366" x2="310" y2="408" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="320" y="391" font-size="12" fill="#555555">读拓扑 · 计算</text>
+
+  <line x1="310" y1="500" x2="310" y2="546" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="320" y="527" font-size="12" fill="#555555">MAD 收发（QP0/QP1）</text>
+
+  <!-- SA 对外查询 -->
+  <line x1="460" y1="88" x2="558" y2="88" stroke="#888888" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-dash)"/>
+  <text x="509" y="78" text-anchor="middle" font-size="11" fill="#888888">对外查询</text>
+</svg>
