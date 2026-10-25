@@ -145,7 +145,243 @@ SM 接管子网的第一步，是先把「子网里到底有什么」摸清楚�
 
 ### 3.1 启动与状态机
 
+启动入口在 `opensm/main.c` 的 `main()`。解析完命令行参数后，它按固定三步把 OpenSM 拉起来：`osm_opensm_init` 完成配置解析与底层对象构造，`osm_opensm_init_finish` 构造 SM / SA 等核心对象，最后 `osm_opensm_bind` 绑定端口、`osm_opensm_sweep` 触发第一次扫描。以 OpenSM 3.3.24 为准，关键调用如下：
+
+```c
+/* main.c — main() */
+status = osm_opensm_init(&osm, &opt);          /* 行 1241：配置 + 子网对象 + vendor */
+...
+status = osm_opensm_init_finish(&osm, &opt);   /* 行 1263：构造 SM/SA，起 sweeper 线程 */
+...
+status = osm_opensm_bind(&osm, opt.guid);      /* 行 1272：绑定到本地端口 */
+...
+osm_opensm_sweep(&osm);                        /* 行 1282：触发首次 sweep */
+```
+
+`osm_opensm_init`（`opensm/osm_opensm.c`）里做两件与本文相关的事：`osm_subn_init` 初始化子网对象（其内存模型在 3.2 展开），`osm_vendor_new` 创建 libvendor 实例——MAD 收发层。`osm_opensm_init_finish` 再调用 `osm_sm_init` 构造 SM 对象。可见「配置 → 子网对象 → vendor → SM 对象」的先后顺序是固定的。
+
+SM 对象初始化的收尾在 `opensm/osm_sm.c` 的 `osm_sm_init`，三件事对状态机至关重要：设定初始状态、创建 sweeper 线程、启动 sweep 定时器：
+
+```c
+/* osm_sm.c — osm_sm_init() 收尾 */
+p_subn->sm_state = p_subn->opt.sm_inactive ?
+    IB_SMINFO_STATE_NOTACTIVE : IB_SMINFO_STATE_DISCOVERING;   /* 行 386 */
+...
+p_sm->thread_state = OSM_THREAD_STATE_RUN;
+status = cl_thread_init(&p_sm->sweeper, sm_sweeper, p_sm,
+                        "opensm sweeper");                      /* 行 395 */
+...
+if (p_sm->p_subn->opt.sweep_interval)
+    cl_timer_start(&p_sm->sweep_timer,
+                   p_sm->p_subn->opt.sweep_interval * 1000);     /* 行 400 */
+```
+
+初始状态由 `sm_inactive` 配置决定：默认进 `DISCOVERING`，配了 `-I`（`--inactive`）则停在 `NOTACTIVE`。这与原理篇 2.1 的「启动 → Discovering」一致——不是靠某个信号跳进去，而是一出生就在发现态。
+
+状态本身只是一组数字，定义在 `include/iba/ib_types.h`：
+
+```c
+/* include/iba/ib_types.h — SMInfo.SM_State 取值 */
+#define IB_SMINFO_STATE_NOTACTIVE      0
+#define IB_SMINFO_STATE_DISCOVERING    1
+#define IB_SMINFO_STATE_STANDBY        2
+#define IB_SMINFO_STATE_MASTER         3
+```
+
+驱动这些状态迁移的，是 `opensm/osm_sm_state_mgr.c` 的 `osm_sm_state_mgr_process`：外层 switch 按当前状态分派，内层 switch 按信号分派。这里贴两段最能说明问题的迁移：
+
+```c
+/* osm_sm_state_mgr.c — osm_sm_state_mgr_process()，DISCOVERING 分支 */
+case IB_SMINFO_STATE_DISCOVERING:
+    switch (signal) {
+    case OSM_SM_SIGNAL_DISCOVERY_COMPLETED:      /* 扫完且没有更高优先级 SM */
+        sm->p_subn->sm_state = IB_SMINFO_STATE_MASTER;
+        ...
+        sm->p_subn->master_sm_base_lid = sm->p_subn->sm_base_lid;
+        break;
+    case OSM_SM_SIGNAL_MASTER_OR_HIGHER_SM_DETECTED:  /* 发现更高优先级 SM */
+        sm->p_subn->sm_state = IB_SMINFO_STATE_STANDBY;
+        ...
+        sm_state_mgr_start_polling(sm);
+        break;
+    ...
+```
+
+STANDBY 因轮询超时回到 DISCOVERING，就是 failover 的落点：
+
+```c
+/* osm_sm_state_mgr.c — osm_sm_state_mgr_process()，STANDBY 分支 */
+case IB_SMINFO_STATE_STANDBY:
+    switch (signal) {
+    case OSM_SM_SIGNAL_POLLING_TIMEOUT:
+    case OSM_SM_SIGNAL_DISCOVER:
+        sm->p_subn->sm_state = IB_SMINFO_STATE_DISCOVERING;
+        ...
+        sm->p_subn->coming_out_of_standby = TRUE;
+        osm_sm_signal(sm, OSM_SIGNAL_SWEEP);
+        break;
+```
+
+`DISCOVERY_COMPLETED` 与 `MASTER_OR_HIGHER_SM_DETECTED` 这两个信号，是在一次 heavy sweep 完成后由 `opensm/osm_state_mgr.c` 的 `do_sweep` 按「是否探测到别的 master」分别发出的（行 1468 / 1537），把状态机与发现流程缝在一起。
+
+所谓「选举」，落到底层是「探测 + 比较」两件事。探测用 `sm_state_mgr_send_master_sm_info_req`，按当前状态决定去问谁——standby 问 `master_sm_guid`，master 则问 `polling_sm_guid`：
+
+```c
+/* osm_sm_state_mgr.c — sm_state_mgr_send_master_sm_info_req() */
+if (sm_state == IB_SMINFO_STATE_STANDBY)
+    guid = sm->master_sm_guid;      /* 探测现有 master */
+else
+    guid = sm->polling_sm_guid;     /* master 态下轮询等待交接的远程 SM */
+...
+status = osm_req_get(sm, &dr_path, IB_MAD_ATTR_SM_INFO, 0, FALSE, ...);
+```
+
+standby 的轮询由 `osm_sm_state_mgr_polling_callback` 驱动：每 `sminfo_polling_timeout` 毫秒醒一次，发一次 `SubnGet(SMInfo)`，`retry_number` 逐次累加，一旦超过 `polling_retry_number` 仍无回应，就判定 master 已死、发出 `OSM_SM_SIGNAL_POLLING_TIMEOUT`：
+
+```c
+/* osm_sm_state_mgr.c — osm_sm_state_mgr_polling_callback() */
+if (sm->retry_number > sm->p_subn->opt.polling_retry_number) {
+    osm_sm_state_mgr_process(sm, OSM_SM_SIGNAL_POLLING_TIMEOUT);
+    goto Exit;
+}
+if (sm_state_mgr_send_master_sm_info_req(sm, sm_state))
+    sm->retry_number++;
+```
+
+「比较」则发生在 `osm_state_mgr.c` 的 `state_mgr_get_highest_sm`（行 908）：它遍历 `sm_guid_tbl` 里所有远端 SM，用 `osm_sm_is_greater_than` 比「优先级、GUID」二元组，优先级高者胜、相同再比 GUID——这就是 `sm_priority` 落地的地方。standby 不是被动等死，而是定时主动探测、超时重新抢一次 master。
+
+呼应原理篇 2.1：那篇画出的四状态与五条迁移主线，在此逐一对应到 `osm_sm_state_mgr_process` 的 switch-case；「选举」不是投票，正是上面「`sm_state_mgr_send_master_sm_info_req` 探测 + `state_mgr_get_highest_sm` 比优先级」的组合。
+
 ### 3.2 拓扑发现
+
+sweep 的触发与执行分两条线程。触发入口 `osm_sm_sweep`（`opensm/osm_sm.c`）只做一件事——置信号位、唤醒 worker：
+
+```c
+/* osm_sm.c — osm_sm_sweep() */
+void osm_sm_sweep(IN osm_sm_t * p_sm)
+{
+    osm_sm_signal(p_sm, OSM_SIGNAL_SWEEP);
+}
+```
+
+真正干活的 worker 是 `osm_sm_init` 里创建的 `sm_sweeper` 线程，它阻塞在事件上，醒来后把 `signal_mask` 里每一位对应的信号交给 `sm_process` 处理：
+
+```c
+/* osm_sm.c — sm_sweeper() */
+while (p_sm->thread_state == OSM_THREAD_STATE_RUN) {
+    status = cl_event_wait_on(&p_sm->signal_event, EVENT_NO_TIMEOUT, TRUE);
+    ...
+    cl_spinlock_acquire(&p_sm->signal_lock);
+    signals = p_sm->signal_mask;
+    p_sm->signal_mask = 0;
+    cl_spinlock_release(&p_sm->signal_lock);
+
+    for (i = 0; signals; signals >>= 1, i++)
+        if (signals & 1)
+            sm_process(p_sm, i);   /* 落到 osm_state_mgr.c 的 do_sweep */
+}
+```
+
+周期性重扫则由 `sm_sweep` 定时器回调驱动——每 `sweep_interval` 秒发一次 `OSM_SIGNAL_SWEEP`，只在 MASTER 或 DISCOVERING 态才真正触发，这就是原理篇 2.2 说的「不是一锤子买卖」：
+
+```c
+/* osm_sm.c — sm_sweep() */
+if (sm->p_subn->sm_state == IB_SMINFO_STATE_MASTER ||
+    sm->p_subn->sm_state == IB_SMINFO_STATE_DISCOVERING)
+    osm_sm_signal(sm, OSM_SIGNAL_SWEEP);
+cl_timer_start(&sm->sweep_timer, sm->p_subn->opt.sweep_interval * 1000);
+```
+
+扫到的拓扑最终落进内存。子网对象 `osm_subn_t`（`include/opensm/osm_subnet.h`）初始化时，`osm_subn_init`（`opensm/osm_subnet.c`）先把 `port_lid_tbl` 建成以 LID 为下标的向量，并把 `max_ucast_lid_ho` 等容量字段预置到规范上限，供后续交换机上报时逐台取最小值收紧。核心数据结构是一套「子网 → 节点 → 端口 → 交换机」的层级（字段已按需裁剪）：
+
+```c
+/* osm_subnet.h — osm_subn_t */
+typedef struct osm_subn {
+    cl_qmap_t sw_guid_tbl;        /* 交换机，按 node GUID 索引 */
+    cl_qmap_t node_guid_tbl;      /* 节点，按 node GUID 索引 */
+    cl_qmap_t port_guid_tbl;      /* 端口，按 port GUID 索引 */
+    cl_ptr_vector_t port_lid_tbl; /* 端口，按 LID 索引 */
+    uint8_t sm_state;             /* 即 3.1 状态机的当前值 */
+    uint16_t max_ucast_lid_ho;    /* 所有交换机 lin_cap 的最小值 */
+    ...
+} osm_subn_t;
+
+/* osm_node.h — osm_node_t */
+typedef struct osm_node {
+    struct osm_switch *sw;        /* 交换机节点指向 osm_switch，否则 NULL */
+    ib_node_info_t node_info;     /* 含 node_guid、node_type、num_ports */
+    osm_physp_t physp_table[1];   /* 物理端口数组，按本地端口号索引，可增长 */
+    ...
+} osm_node_t;
+
+/* osm_port.h — osm_physp_t / osm_port_t */
+typedef struct osm_physp {
+    ib_port_info_t port_info;     /* 含 base_lid、port_state */
+    ib_net64_t port_guid;
+    uint8_t port_num;
+    struct osm_node *p_node;
+    struct osm_physp *p_remote_physp;  /* 对端物理端口，即拓扑的一条边 */
+    osm_dr_path_t dr_path;        /* 定向路由路径 */
+    ...
+} osm_physp_t;
+
+typedef struct osm_port {
+    ib_net64_t guid;
+    osm_physp_t *p_physp;         /* 关联的物理端口 */
+    ib_net16_t lid;               /* 分配的 LID */
+    ...
+} osm_port_t;
+
+/* osm_switch.h — osm_switch_t */
+typedef struct osm_switch {
+    ib_switch_info_t switch_info; /* 含 lin_cap（线性转发表容量） */
+    uint8_t **hops;               /* LID 矩阵：每 LID 到每端口的跳数 */
+    uint8_t *lft;                 /* 当前线性转发表 */
+    uint8_t *new_lft;             /* 路由引擎刚算出的新表 */
+    ...
+} osm_switch_t;
+```
+
+这套结构不是凭空造的，而是被三个 MAD 接收 handler 逐个字段填起来的。NodeInfo 的入口是 `osm_ni_rcv_process`（`opensm/osm_node_info_rcv.c`）：按 node GUID 查表，没查到走 `ni_rcv_process_new` 建新节点；后者 `osm_node_new` 建节点、`osm_port_new` 建端口，再 `cl_qmap_insert` 进 `port_guid_tbl` 与 `node_guid_tbl`，最后按 `node_type` 分发——是交换机就接着去要 SwitchInfo：
+
+```c
+/* osm_node_info_rcv.c — ni_rcv_process_new() */
+p_node = osm_node_new(p_madw);
+...
+p_port = osm_port_new(p_ni, p_node);
+cl_qmap_insert(&sm->p_subn->port_guid_tbl, p_ni->port_guid, &p_port->map_item);
+...
+cl_qmap_insert(&sm->p_subn->node_guid_tbl, p_ni->node_guid, &p_node->map_item);
+...
+case IB_NODE_TYPE_SWITCH:
+    ni_rcv_process_new_switch(sm, p_node, p_madw);   /* 去要 SwitchInfo */
+    break;
+```
+
+PortInfo 的 handler `osm_pi_rcv_process`（`opensm/osm_port_info_rcv.c`）负责两件事：用 `osm_physp_set_port_info` 把 `base_lid`、`port_state` 填进 `physp->port_info`；对交换机的外部端口，若链路不是 down，就沿当前 DR 路径再加一跳、向对端要 NodeInfo——这就是逐跳展开的关键一步：
+
+```c
+/* osm_port_info_rcv.c — pi_rcv_process_switch_ext_port() */
+path = *osm_physp_get_dr_path_ptr(p_physp);
+if (osm_dr_path_extend(&path, osm_physp_get_port_num(p_physp))) { ... }
+...
+status = osm_req_get(sm, &path, IB_MAD_ATTR_NODE_INFO, 0, TRUE, ...);
+```
+
+SwitchInfo 的 handler `osm_si_rcv_process`（`opensm/osm_sw_info_rcv.c`）收到后，`si_rcv_process_new` 建 `osm_switch_t`、插入 `sw_guid_tbl`，回填 `p_node->sw`，并把子网的 `max_ucast_lid_ho` 收紧为各交换机 `lin_cap` 的最小值——这正是 LFT 长度的依据：
+
+```c
+/* osm_sw_info_rcv.c — si_rcv_process_new() */
+p_sw = osm_switch_new(p_node, p_madw);
+...
+if (cl_ntoh16(p_si->lin_cap) < sm->p_subn->max_ucast_lid_ho)
+    sm->p_subn->max_ucast_lid_ho = cl_ntoh16(p_si->lin_cap);
+cl_qmap_insert(p_sw_guid_tbl, osm_node_get_node_guid(p_node), &p_sw->map_item);
+p_node->sw = p_sw;
+osm_switch_set_switch_info(p_sw, p_si);
+```
+
+呼应原理篇 2.2：那篇讲的「DR SMP 逐跳探路、广度优先展开、读回三类属性建树」，在此逐条落到 `osm_dr_path_extend` 的路径延伸、`osm_req_get(IB_MAD_ATTR_NODE_INFO)` 的逐跳要 NodeInfo、以及 ni / pi / si 三个 handler 把 NodeInfo / PortInfo / SwitchInfo 填进 `osm_subn_t → osm_node_t → osm_port_t → osm_switch_t` 的过程。
 
 ### 3.3 LID 与路由
 
