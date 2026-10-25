@@ -1,0 +1,61 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="opensm-minhop-lft">
+    <mxGraphModel dx="827" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="minhop：Dijkstra 最短路径 → 线性转发表 LFT" style="text;html=1;fontSize=20;fontStyle=1;align=center;fontColor=#1a1a1a;" vertex="1" parent="1">
+          <mxGeometry x="213" y="8" width="400" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="拓扑（以 SW1 为源）" style="text;html=1;fontSize=13;fontStyle=1;align=center;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="135" y="48" width="200" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="SW1 的 LFT（线性转发表）" style="text;html=1;fontSize=13;fontStyle=1;align=center;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="555" y="48" width="200" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="SW1（源）&#xa;port 1 / 2 / 3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="170" y="80" width="130" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="SW2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="230" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="SW3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="230" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="HCA A&#xa;LID 5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="60" y="360" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="HCA B&#xa;LID 6" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="360" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="HCA C&#xa;LID 7" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="360" y="80" width="110" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="LFT（以 LID 为下标）&#xa;下标 = LID，值 = 出端口号&#xa;LID 5 → 出端口 1（经 SW2）&#xa;LID 6 → 出端口 2（经 SW3）&#xa;LID 7 → 出端口 3（直连 HCA C）&#xa;查表转发：取目的 LID 当下标读表" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="550" y="80" width="240" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="minhop 以每台交换机为源各跑一遍 Dijkstra，汇总成各自的 LFT&#xa;报文到交换机：取目的 LID → 读 LFT[LID] → 得出端口 → 转发" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="460" width="707" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="port 1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;fontSize=12;exitX=0.25;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="5" target="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="port 2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;fontSize=12;exitX=0.75;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="5" target="7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="6" target="8">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="7" target="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="port 3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;fontSize=12;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="5" target="10">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="18" value="Dijkstra&#xa;算每个 LID 的下一跳出端口" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#6c8ebf;fontSize=11;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="10" target="11">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

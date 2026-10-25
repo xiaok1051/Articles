@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="opensm-lid">
+    <mxGraphModel dx="827" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="LID 分配：连续块（base LID + 端口偏移）" style="text;html=1;fontSize=20;fontStyle=1;align=center;fontColor=#1a1a1a;" vertex="1" parent="1">
+          <mxGeometry x="213" y="8" width="400" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="每台交换机一个 base LID，物理端口依次 base+1、base+2…… HCA 端口接着往下排" style="text;html=1;fontSize=12;align=center;fontColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="113" y="40" width="600" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="交换机&#xa;base LID = 1（自身）&#xa;port 0（管理端口）= LID 1&#xa;port 1 = LID 2&#xa;port 2 = LID 3&#xa;port 3 = LID 4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="80" width="330" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="HCA A&#xa;LID 5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="320" width="100" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="HCA B&#xa;LID 6" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="235" y="320" width="100" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="HCA C&#xa;LID 7" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="350" y="320" width="100" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="物理端口 LID = base LID + 端口偏移&#xa;同一交换机的 LID 聚成连续区间" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="120" y="440" width="330" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="LMC：一个端口 → 多个 LID&#xa;LMC（LID Mask Count）给每个端口&#xa;再扩 N 位，同一端口得到 2^N 个 LID&#xa;默认 LMC = 0：每端口 1 个 LID&#xa;LMC = 1：每端口 2 个 LID（多路径）&#xa;注：LID 0 为保留值，不分配&#xa;多 LID 供上层做负载均衡 / 多路径" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="520" y="80" width="270" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="port 1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;fontSize=12;exitX=0.15;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="4" target="5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="port 2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;fontSize=12;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="4" target="6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="port 3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;fontSize=12;exitX=0.85;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="4" target="7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
