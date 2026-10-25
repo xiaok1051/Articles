@@ -102,7 +102,7 @@ SM 接管子网的第一步，是先把「子网里到底有什么」摸清楚�
 
 ![LID 分配示意](../images/23-opensm-lid.png)
 
-**路由计算：minhop 就是 Dijkstra。** 地址就位后，下一步是让每台交换机知道「报文要去某个 LID，该从哪个端口送出去」。OpenSM 默认的单播路由引擎叫 minhop，字面意思就是「最少跳数」。它本质上把内存里的拓扑图当成一张加权图，以每台交换机为源点各跑一遍 Dijkstra 最短路径算法，算出「到子网里每个 LID 的最短路径，下一跳该走哪个出端口」。
+**路由计算：minhop 求最少跳数。** 地址就位后，下一步是让每台交换机知道「报文要去某个 LID，该从哪个端口送出去」。OpenSM 默认的单播路由引擎叫 minhop，字面意思就是「最少跳数」。它把内存里的拓扑图当成一张加权图，用距离向量式的**多轮松弛**来传播跳数：每轮每台交换机都从直连邻居吸收最新的跳数信息，最多迭代「交换机数 − 1」轮、直到没有任何交换机再更新为止（这正是 Bellman-Ford 类算法的思路），最终算出「到子网里每个 LID 的最少跳数下一跳」。
 
 对每一台交换机，minhop 都会汇总出一组「LID → 出端口」的映射，落成一张**线性转发表 LFT（Linear Forwarding Table）**：一张以 LID 为下标、值为出端口号的线性数组。这正是 IB 交换机「查表转发」所依赖的那张表——报文到达时，交换机取出报文头里的目的 LID，直接拿它当下标读 LFT，读到出端口号，转发就完成了。下标即地址、元素即端口，这也是「线性转发表」名字的由来。
 
@@ -112,7 +112,7 @@ SM 接管子网的第一步，是先把「子网里到底有什么」摸清楚�
 
 | 引擎 | 一句话算法思想 | 适用场景 |
 |------|--------------|---------|
-| minhop（默认） | 以每台交换机为源跑 Dijkstra，取到每个 LID 的最短跳数下一跳 | 通用拓扑，追求最短路径 |
+| minhop（默认） | 距离向量式多轮松弛（Bellman-Ford 类）传播最少跳数 | 通用拓扑，追求最短路径 |
 | up/down | 给节点按层序定 rank，路由只能「先上后下」，禁止下行后上行 | 树状 / 层次化拓扑，天然无死锁 |
 | down/up | 与 up/down 对称，从底部叶节点向上收敛 | 以叶节点为根、向上汇聚的拓扑 |
 | fat-tree | 识别叶 / 脊分层，按端口位置与层序计算 | 胖树（leaf-spine）数据中心拓扑 |
@@ -385,6 +385,134 @@ osm_switch_set_switch_info(p_sw, p_si);
 
 ### 3.3 LID 与路由
 
+拓扑就绪后，SM 进入 Master 态要补两件事：给每个端口分配 LID、算路由生成 LFT。先看 LID 分配（`osm_lid_mgr.c`）。
+
+**LID 分配：先 SM 自己，再全子网。** 入口有两个函数：`osm_lid_mgr_process_sm`（行 1155）先跑，`osm_lid_mgr_process_subnet`（行 1183）随后。前者先 `lid_mgr_init_sweep` 复位 `port_lid_tbl` 与空闲区间列表，再 `lid_mgr_process_our_sm_node` 给 SM 自己的端口先分配——因为它要把这个 base LID 广播给其它端口，`lid_mgr_get_port_lid` 返回的 min_lid 会被写进 `sm_base_lid` / `master_sm_base_lid`（行 1136-1137）。后者遍历 `port_guid_tbl` 里所有端口，跳过自己（行 1214），逐个调 `lid_mgr_get_port_lid`（行 1226）拿区间，再用 `lid_mgr_set_physp_pi`（行 802）把 base LID 写进 PortInfo 下发。
+
+每个端口分几个 LID，由 LMC 决定，关键一行是 `num_lids = 1 << lmc`；有一个特例——交换机 port 0 若硬件不支持 LMC，就只分 1 个：
+
+```c
+/* osm_lid_mgr.c — lid_mgr_get_port_lid() */
+uint8_t num_lids = (1 << p_mgr->p_subn->opt.lmc);   /* 行 687：LMC 决定每端口 LID 数 */
+...
+if (p_port->p_node->sw &&
+    !osm_switch_sp0_is_lmc_capable(p_port->p_node->sw, p_mgr->p_subn))
+    num_lids = 1;                                    /* 行 697-699：port 0 不支持 LMC 就只分 1 个 */
+```
+
+分配的落点是「找一段连续的空闲 LID 区间」，由 `lid_mgr_find_free_lid_range` 完成，起点还要按 LMC 对齐：
+
+```c
+/* osm_lid_mgr.c — lid_mgr_find_free_lid_range() */
+lmc_num_lids = (1 << p_mgr->p_subn->opt.lmc);
+lmc_mask = ~((1 << p_mgr->p_subn->opt.lmc) - 1);   /* 行 607-608 */
+...
+if (num_lids > 1 && (lid & lmc_mask) != lid)
+    lid = (lid + lmc_num_lids) & lmc_mask;          /* 行 621-623：起点按 LMC 对齐 */
+if (lid + num_lids - 1 <= p_range->max_lid) {       /* 行 627：区间够放就分配 */
+    ...
+    *p_min_lid = lid;
+    *p_max_lid = (uint16_t) (lid + num_lids - 1);   /* 行 638-639：[min,max] 连续块 */
+    return;
+}
+```
+
+于是每个端口拿到的是一段从 min_lid 开始的连续块，长度 `2^LMC`。原理篇 2.3 说的「base LID + 端口偏移」落到源码，就是「每端口一段 LMC 对齐的连续 LID 区间」：base 即 min_lid，偏移即区间内的连续编号。分配结果记进 `guid2lid` 持久库与 `port_lid_tbl`（行 775-781）。LID 0 保留、LMC 扩展出多个可选 LID、port 0 特例，全都在这里兑现。
+
+**路由计算：minhop 的松弛循环。** LID 就位后进入 `osm_ucast_mgr_process`（行 1098）：先 `ucast_mgr_setup_all_switches` 给每台交换机 `osm_switch_prepare_path_rebuild` 重置 hops 矩阵与 new_lft，再遍历路由引擎链表逐套试 `ucast_mgr_route`（行 1122-1133）。默认引擎 minhop 的回调注册在 `osm_ucast_minhop_setup`（行 1165），绑定 `osm_ucast_mgr_build_lid_matrices` 与 `ucast_mgr_build_lfts`。
+
+`osm_ucast_mgr_build_lid_matrices`（行 596）是跳数矩阵的构建主循环：先 `set_default_hop_wf` 把所有端口权重置 1（行 610），`ucast_mgr_process_hop_0_1` 初始化「自己 LID → port 0 为 0 跳、直连邻居交换机的 LID → 对应 port 为 1 跳」（行 627），然后最多迭代「交换机数 − 1」轮 `ucast_mgr_process_neighbors` 直到跳数收敛（行 664-668）。每轮的核心松弛在 `ucast_mgr_process_neighbor`：
+
+```c
+/* osm_ucast_mgr.c — ucast_mgr_process_neighbor() */
+lid_ho = cl_ntoh16(osm_node_get_base_lid(p_sw->p_node, 0));
+hops = osm_switch_get_least_hops(p_remote_sw, lid_ho); /* 行 157-158：邻居到该 LID 的最少跳数 */
+if (hops == OSM_NO_PATH)
+    continue;
+hops += p->hop_wf;                                      /* 行 161：再加本端这条边的权 */
+if (hops < osm_switch_get_hop_count(p_this_sw, lid_ho, port_num)) {
+    osm_switch_set_hops(p_this_sw, lid_ho, port_num, (uint8_t) hops);  /* 行 164-165：更短则更新 */
+    p_mgr->some_hop_count_set = TRUE;                   /* 行 171：本轮有变化，继续迭代 */
+}
+```
+
+这正是原理篇 2.3 说的**多轮松弛**：源码里是全体交换机同步做多轮松弛——每轮每台交换机从邻居「吸收」到各 LID 的最少跳数，加边权取更小者，最多 N−1 轮收敛。这是 Bellman-Ford 类算法，而非带优先队列的单源 Dijkstra；两者都收敛到最短跳数，只是实现路径不同。
+
+跳数存哪？`osm_switch_t` 的 `hops` 字段是 `uint8_t **`，按 `[LID][端口]` 索引；其中 `[LID][0]` 这一列被复用，始终存「到该 LID 的最少跳数」，作为 `osm_switch_get_least_hops` 的取值来源：
+
+```c
+/* osm_switch.c — osm_switch_set_hops() */
+p_sw->hops[lid_ho][port_num] = num_hops;         /* 行 78 */
+if (p_sw->hops[lid_ho][0] > num_hops)
+    p_sw->hops[lid_ho][0] = num_hops;            /* 行 79-80：port 0 列保留最小跳数 */
+```
+
+矩阵收敛后，`ucast_mgr_build_lfts`（行 860）把跳数矩阵转成 LFT：对每台交换机调 `ucast_mgr_process_tbl`（行 357），遍历所有端口、每个 LMC 偏移，调 `osm_switch_recommend_path`（osm_switch.c 行 234）从「跳数等于最少跳数的端口」里挑路径数最少的一个，把结果写进 `p_sw->new_lft[lid_ho] = port`（行 302）。最后 `osm_ucast_mgr_set_fwd_tables`（行 1050）先下发 SwitchInfo 的 lin_top，再 `ucast_mgr_pipeline_fwd_tbl` 把 new_lft 逐块交给交换机——下发细节留到 3.4。
+
+呼应原理篇 2.3：那篇的「连续块分配 LID」「minhop 取最短跳数」「LID→出端口落成 LFT」，在此分别落到 `lid_mgr_find_free_lid_range` 的 LMC 对齐分配、`ucast_mgr_process_neighbor` 的松弛、`ucast_mgr_process_tbl` 里 `new_lft[lid] = port` 的写入。
+
 ### 3.4 LFT 下发与稳态
+
+3.3 末尾算出的 new_lft 还在内存里，要让它生效，得逐块写回交换机并等回确认。
+
+**分块下发。** 下发入口 `osm_ucast_mgr_set_fwd_tables`（行 1050）→ `ucast_mgr_pipeline_fwd_tbl`（行 1037）：`max_block = max_lid / IB_SMP_DATA_SIZE + 1`（行 1041），两层循环「先块 0 写所有交换机、再块 1……」逐块推进。块大小就是 `IB_SMP_DATA_SIZE = 64` 字节——一个 SMP 的 data payload，即每块 64 个 LID 条目。这正是分块的原因：单块 MAD 数据区只有 64 字节，LID 一多就必须切块。每块的处理在 `set_lft_block`：
+
+```c
+/* osm_ucast_mgr.c — set_lft_block() */
+if (!p_sw->need_update && !p_mgr->p_subn->need_update &&
+    !memcmp(p_sw->new_lft + block_id_ho * IB_SMP_DATA_SIZE,
+            p_sw->lft + block_id_ho * IB_SMP_DATA_SIZE, IB_SMP_DATA_SIZE))
+    return 0;                                        /* 行 1003-1007：块内容没变就不发 */
+memset(p_sw->lft + block_id_ho * IB_SMP_DATA_SIZE, 0, IB_SMP_DATA_SIZE); /* 行 1013：先清零，出错下轮重发 */
+status = osm_req_set(p_mgr->sm, p_path,
+         p_sw->new_lft + block_id_ho * IB_SMP_DATA_SIZE, IB_SMP_DATA_SIZE,
+         IB_MAD_ATTR_LIN_FWD_TBL, cl_hton32(block_id_ho), FALSE, ...);  /* 行 1020-1025 */
+```
+
+`set_lft_block`（行 974）每块做三件事：先 `memcmp` 比对 new_lft 与当前 lft，没变就跳过；再**先清零本地 lft 的对应块**——注释写明「万一 MAD 出错，下一轮 sweep 会重发」；最后 `osm_req_set` 发一条 `Set(LinearForwardingTable)`，块号塞进 `attr_mod`（`cl_hton32(block_id_ho)`）。
+
+**逐块回确认。** 交换机回包后，由 `osm_lin_fwd_rcv.c` 的 `osm_lft_rcv_process`（行 58）接收：
+
+```c
+/* osm_lin_fwd_rcv.c — osm_lft_rcv_process() */
+p_block = ib_smp_get_payload_ptr(p_smp);
+block_num = cl_ntoh32(p_smp->attr_mod);              /* 行 78-79：从 attr_mod 取回块号 */
+if (ib_smp_get_status(p_smp)) { ... goto Exit; }     /* 行 87-92：回包状态非 0 即出错，不写回 */
+...
+status = osm_switch_set_lft_block(p_sw, p_block, block_num);  /* 行 102：确认块写回 lft */
+```
+
+注意「回确认」的语义：`osm_switch_set_lft_block`（osm_switch.h 行 710，inline）把回包里这一块拷进 `p_sw->lft`（当前表），而不是 new_lft：
+
+```c
+/* osm_switch.h — osm_switch_set_lft_block()（inline） */
+uint16_t lid_start = (uint16_t) (block_num * IB_SMP_DATA_SIZE);
+if (lid_start + IB_SMP_DATA_SIZE > p_sw->lft_size)
+    return IB_INVALID_PARAMETER;
+memcpy(&p_sw->lft[lid_start], p_block, IB_SMP_DATA_SIZE);  /* 行 714-721 */
+```
+
+于是「下发 → 回确认」构成闭环：`set_lft_block` 发 Set 前先把 lft 该块清零，交换机确认后 `osm_lft_rcv_process` 把它写回 lft；若回包状态非 0 或干脆没回，lft 该块仍是 0，下一轮 sweep 的 `memcmp` 判定会再次下发。block 大小固定在 64 字节，块号借 `attr_mod` 传递——这正是原理篇 2.4 说的「一块块写、一块块回确认」。
+
+**稳态与 trap。** LFT 都落到位后 SM 进入稳态，但仍在监听 trap。trap 入口 `osm_trap_rcv_process`（行 683）断言「非响应报文」后把请求交给 `trap_rcv_process_request`（行 372）：先 `log_trap_info`（行 280）用 `ib_get_trap_str` 打出 trap 编号与类型日志，再按 trap 号分类处理。触发重扫的判断在函数末尾：
+
+```c
+/* osm_trap_rcv.c — trap_rcv_process_request() */
+if (sm->p_subn->opt.sweep_on_trap) {
+    if (ib_notice_is_generic(p_ntci) &&
+        (cl_ntoh16(p_ntci->g_or_v.generic.trap_num) == SM_LINK_STATE_CHANGED_TRAP ||
+         cl_ntoh16(p_ntci->g_or_v.generic.trap_num) == SM_LOCAL_CHANGES_TRAP ||
+         run_heavy_sweep)) {
+        sm->p_subn->force_heavy_sweep = TRUE;        /* 行 628：trap 128/144 触发 heavy sweep */
+    }
+    osm_sm_signal(sm, OSM_SIGNAL_SWEEP);             /* 行 630：唤醒 sweeper */
+}
+```
+
+`SM_LINK_STATE_CHANGED_TRAP` 即 128、`SM_LOCAL_CHANGES_TRAP` 即 144（定义在 include/iba/ib_types.h 行 7999 / 8003），二者置 `force_heavy_sweep` 并 `osm_sm_signal(OSM_SIGNAL_SWEEP)` 唤醒 sweeper——这就是原理篇 2.4 说的 trap 128/144 触发重扫，且受 `sweep_on_trap` 开关控制。另外 trap 129/130/131（链路完整性阈值 / 缓冲溢出 / 看门狗超时）走 `physp_change_trap` 分支（行 487-499），对反复刷屏的 noisy 端口调 `shutup_noisy_port` 标记不健康，不一定触发全量重扫；trap 144 还有个特例——若只是节点描述更新，就只 `osm_req_get_node_desc` 重读描述、跳过重扫（行 551-568）。
+
+**SA 常驻。** 稳态下 SA 与 SM 同进程常驻：`osm_sa_init`（osm_sa.c 行 159）构造 SA 并初始化 mad_ctrl，`osm_sa_bind`（行 327）绑定到 QP1，之后 PathRecord 等查询在 `osm_sa_path_record.c` 处理——细节不在本文展开。
+
+呼应原理篇 2.4：那篇的「分块写回」「逐块回确认」「trap 128/144 触发重扫」「SA 常驻」，在此逐条落到 `set_lft_block` 的 64 字节分块、`osm_lft_rcv_process` 的写回 lft、`trap_rcv_process_request` 末尾的 `sweep_on_trap` 分支、以及 `osm_sa_bind` 的 QP1 绑定。
 
 ## 4. 收尾
