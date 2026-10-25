@@ -516,3 +516,36 @@ if (sm->p_subn->opt.sweep_on_trap) {
 呼应原理篇 2.4：那篇的「分块写回」「逐块回确认」「trap 128/144 触发重扫」「SA 常驻」，在此逐条落到 `set_lft_block` 的 64 字节分块、`osm_lft_rcv_process` 的写回 lft、`trap_rcv_process_request` 末尾的 `sweep_on_trap` 分支、以及 `osm_sa_bind` 的 QP1 绑定。
 
 ## 4. 收尾
+
+### 一条主线串起来
+
+回顾全文，OpenSM 的整条主流程可以用一句话概括：**靠一张状态机驱动，在内存里维护一棵拓扑树，集中算出 LID 与路由，再通过 MAD 下发到设备**。它不是以太网式的分布式收敛，而是集中决策、统一下发。
+
+拆开看，四个环节环环相扣：
+
+- **状态机**（`osm_sm_state_mgr.c`）决定 SM 此刻该干什么——Discovering 扫拓扑、Master 服务、Standby 待命，failover 也由它驱动。
+- **数据模型**（`osm_subn_t` 为根）是理解一切的钥匙：sweep 往里填、LID 分配改写它、路由计算消费它、LFT 从它导出。
+- **集中计算**（LID 分配 + minhop 路由）是 OpenSM 区别于以太网的根本——所有决策在 SM 一处算好，交换机只负责查表转发。
+- **MAD 下发**（libvendor 收发 + `Set(LinearForwardingTable)`）让计算结果落到设备，链路层随之「活」起来。
+
+### 核心数据结构回顾
+
+文中反复出现的那棵「子网 → 节点 → 端口 → 交换机」的树，是 OpenSM 在内存里的世界模型，值得最后再收一次：
+
+- `osm_subn_t`（子网）：根对象，持 `sw_guid_tbl` / `node_guid_tbl` / `port_guid_tbl` 三张按 GUID 索引的表，和 `port_lid_tbl`（按 LID 索引），外加 `sm_state`（状态机当前值）与 `max_ucast_lid_ho`（各交换机 LFT 容量的最小值，决定 LFT 长度）。
+- `osm_node_t`（节点）：一台设备，`node_info` 存 GUID / 类型 / 端口数，`sw` 指向交换机结构（非交换机节点为 NULL）。
+- `osm_physp_t` / `osm_port_t`（端口）：物理端口持 `port_info`（base_lid / 状态）与 `p_remote_physp`（拓扑边）；逻辑端口持分配到的 `lid`。
+- `osm_switch_t`（交换机）：`hops` 是 minhop 的跳数矩阵，`lft` / `new_lft` 分别是当前与待下发的转发表。
+
+抓不住这张表，就抓不住后面所有逻辑——它既是 sweep 的终点，也是路由计算的起点。
+
+### 进一步阅读
+
+本文只跟读了主流程，OpenSM 还有大量值得深入的方向：
+
+- **路由引擎**：minhop 之外，up/down、fat-tree、LASH、DFSSSP 等各有适用场景（2.3 已列表），每个引擎的算法与无死锁证明都值得单独成篇。
+- **SA 与 PathRecord**：主机如何查到路径、multipath 如何选择，落在 `osm_sa_path_record.c`。
+- **QoS / 分区 / 组播 / 拥塞控制**：P_Key 隔离、VL 仲裁、组播转发表 MFT，都是控制面进阶话题。
+- **冗余与 failover**：standby 轮询、master 交接、`sm_priority` 的完整语义。
+
+把这条主流程吃透，再往上盖这些楼，会稳很多。
