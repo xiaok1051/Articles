@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620" font-family="PingFang SC, Microsoft YaHei, sans-serif">
-  <rect x="0" y="0" width="900" height="620" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="625" viewBox="0 -50 900 625" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="-50" width="900" height="625" fill="#ffffff"/>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
       <path d="M 0 0 L 10 5 L 0 10 Z" fill="#555555"/>
@@ -7,57 +7,62 @@
   </defs>
 
   <!-- 标题 -->
-  <text x="450" y="36" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">SM 状态机（SMInfo.SM_State）</text>
+  <text x="450" y="0" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">SM 状态机（SMInfo.SM_State）</text>
 
   <!-- 初始伪状态 -->
-  <circle cx="450" cy="66" r="10" fill="#333333"/>
+  <circle cx="450" cy="23" r="10" fill="#333333"/>
 
   <!-- 启动：初始状态 -> Discovering -->
-  <line x1="450" y1="76" x2="450" y2="92" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
-  <text x="460" y="87" font-size="12" fill="#555555">启动</text>
-  <text x="460" y="103" font-size="10" fill="#999999">默认进入 Discovering；配置 -I 则停 NotActive</text>
+  <line x1="450" y1="33" x2="450" y2="94" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="440" y="50" text-anchor="end" font-size="12" fill="#555555">启动</text>
+  <text x="440" y="65" text-anchor="end" font-size="10" fill="#999999">默认进入 Discovering；</text>
+  <text x="440" y="79" text-anchor="end" font-size="10" fill="#999999">配置 -I 则停 NotActive</text>
 
   <!-- Discovering -> Master -->
-  <polyline points="350,148 185,148 185,318" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
-  <text x="177" y="167" text-anchor="end" font-size="11.5" fill="#444444">选举胜出：无更高优先级 SM</text>
-  <text x="177" y="183" text-anchor="end" font-size="9.5" fill="#999999">DISCOVERY_COMPLETED</text>
+  <line x1="400" y1="172" x2="266" y2="318" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="258" y="221" width="155" height="33" fill="#ffffff"/>
+  <text x="335" y="238" text-anchor="middle" font-size="11" fill="#444444">选举胜出：无更高优先级 SM</text>
+  <text x="335" y="252" text-anchor="middle" font-size="10" fill="#999999">DISCOVERY_COMPLETED</text>
 
   <!-- Discovering -> Standby -->
-  <polyline points="550,148 715,148 715,318" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
-  <text x="723" y="167" font-size="11.5" fill="#444444">发现更高优先级 master</text>
-  <text x="723" y="183" font-size="9.5" fill="#999999">MASTER_OR_HIGHER_SM_DETECTED</text>
+  <line x1="500" y1="172" x2="599" y2="358" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="460" y="280" width="200" height="33" fill="#ffffff"/>
+  <text x="560" y="296" text-anchor="middle" font-size="11" fill="#444444">发现更高优先级 master</text>
+  <text x="560" y="310" text-anchor="middle" font-size="10" fill="#999999">MASTER_OR_HIGHER_SM_DETECTED</text>
 
-  <!-- Standby -> Discovering（右侧正交回环） -->
-  <polyline points="820,358 870,358 870,134 552,134" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
-  <text x="710" y="125" text-anchor="middle" font-size="11.5" fill="#444444">轮询超时，重新竞选（failover）</text>
-  <text x="710" y="155" text-anchor="middle" font-size="9.5" fill="#999999">OSM_SM_SIGNAL_POLLING_TIMEOUT</text>
+  <!-- Standby -> Discovering -->
+  <polyline points="652,360 652,134 552,134" fill="none" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="516" y="221" width="220" height="33" fill="#ffffff"/>
+  <text x="626" y="238" text-anchor="middle" font-size="11" fill="#444444">轮询超时，重新竞选（failover）</text>
+  <text x="626" y="252" text-anchor="middle" font-size="10" fill="#999999">OSM_SM_SIGNAL_POLLING_TIMEOUT</text>
 
   <!-- Master -> NotActive -->
-  <polyline points="185,396 185,548 348,548" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
-  <text x="177" y="470" text-anchor="end" font-size="11.5" fill="#444444">让位 / 被降级</text>
+  <line x1="266" y1="396" x2="400" y2="474" stroke="#555555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="283" y="420" width="100" height="22" fill="#ffffff"/>
+  <text x="333" y="436" text-anchor="middle" font-size="11" fill="#444444">让位 / 被降级</text>
 
   <!-- NotActive -> Discovering（虚线：重新激活） -->
-  <line x1="450" y1="508" x2="450" y2="176" stroke="#999999" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
-  <text x="460" y="330" font-size="11.5" fill="#777777">重新激活</text>
-  <text x="460" y="346" font-size="9.5" fill="#999999">OSM_SM_SIGNAL_DISCOVER</text>
+  <line x1="450" y1="474" x2="450" y2="176" stroke="#999999" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <text x="442" y="318" text-anchor="end" font-size="11" fill="#777777">重新激活</text>
+  <text x="442" y="333" text-anchor="end" font-size="10" fill="#999999">OSM_SM_SIGNAL_DISCOVER</text>
 
   <!-- Discovering -->
   <rect x="350" y="96" width="200" height="76" rx="10" ry="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="450" y="128" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Discovering</text>
-  <text x="450" y="152" text-anchor="middle" font-size="11" fill="#444444">发现态 · 扫描拓扑、参与选举</text>
+  <text x="450" y="126" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Discovering</text>
+  <text x="450" y="150" text-anchor="middle" font-size="11" fill="#444444">发现态 · 扫描拓扑、参与选举</text>
 
   <!-- Master（稳态，绿色高亮） -->
-  <rect x="80" y="320" width="210" height="76" rx="10" ry="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="185" y="352" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Master</text>
-  <text x="185" y="376" text-anchor="middle" font-size="11" fill="#444444">主状态 · 分配 LID、算路由、下发 LFT</text>
+  <rect x="161" y="320" width="210" height="76" rx="10" ry="10" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="266" y="350" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Master</text>
+  <text x="266" y="374" text-anchor="middle" font-size="11" fill="#444444">主状态 · 分配 LID、算路由、下发 LFT</text>
 
   <!-- Standby -->
-  <rect x="610" y="320" width="210" height="76" rx="10" ry="10" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.5"/>
-  <text x="715" y="352" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Standby</text>
-  <text x="715" y="376" text-anchor="middle" font-size="11" fill="#444444">备用态 · 定时轮询 master 是否存活</text>
+  <rect x="547" y="360" width="210" height="70" rx="10" ry="10" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.5"/>
+  <text x="652" y="388" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">Standby</text>
+  <text x="652" y="411" text-anchor="middle" font-size="11" fill="#444444">备用态 · 定时轮询 master 是否存活</text>
 
   <!-- NotActive -->
-  <rect x="350" y="510" width="200" height="76" rx="10" ry="10" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
-  <text x="450" y="542" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">NotActive</text>
-  <text x="450" y="566" text-anchor="middle" font-size="11" fill="#444444">未激活 · 不参与选举</text>
+  <rect x="350" y="476" width="200" height="76" rx="10" ry="10" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="450" y="506" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">NotActive</text>
+  <text x="450" y="530" text-anchor="middle" font-size="11" fill="#444444">未激活 · 不参与选举</text>
 </svg>
