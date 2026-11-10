@@ -1,4 +1,4 @@
-# OpenSM 源码解析：子网管理器如何发现、路由并统治一个子网
+# OpenSM 源码解析
 
 > 从启动到下发 LFT：读透 OpenSM 的核心闭环
 
@@ -6,7 +6,7 @@
 
 ## 1. 引言与模块全景
 
-### 从两篇前文到本文
+### 本篇定位
 
 「IB 协议那篇」已经引入了 SM 这一角色：IB 交换机不运行任何分布式路由协议，转发表并非由各台交换机自行收敛，而是由 SM 集中计算、统一下发。那篇讲清了「SM 是谁、SMA/SA 如何配合、子网发现大致分几步」，但只停留在概念与报文层面——SM 究竟是一个怎样的程序、内部如何组织、那条「发现 → 分配 LID → 算路径 → 下发 LFT」的闭环具体落在哪些代码里，均未展开。
 
@@ -30,18 +30,18 @@ OpenSM 是 IB 生态里最主流的开源子网管理器（Subnet Manager），�
 
 各模块与源码文件的对应关系如下（文件均来自 OpenSM 3.3.24）：
 
-| 模块 | 职责 | 关键文件 | 本文是否深入 |
-|------|------|----------|--------------|
-| 状态机 | 驱动 SM 从发现到稳态的重配置循环 | `osm_sm.c`、`osm_sm_state_mgr.c` | 本文深入 |
-| 拓扑数据模型 | 子网、节点、端口、交换机的内存表示 | `osm_subnet.c`、`osm_node.c`、`osm_port.c`、`osm_switch.c` | 本文深入 |
-| LID 分配 | 为每个端口分配唯一 16 位 LID | `osm_lid_mgr.c` | 本文深入 |
-| 单播路由(minhop) | 计算任意两点间最短路径 | `osm_ucast_mgr.c` | 本文深入 |
-| LFT 下发 | 把算好的线性转发表写入交换机 | `osm_lin_fwd_rcv.c` | 本文深入 |
-| MAD 收发(libvendor) | 构造并收发 MAD，屏蔽 QP0/QP1 底层细节 | `libvendor/`（`osm_vendor_ibumad.c`） | 只做职责概览 |
-| SA | 子网管理服务，响应 PathRecord 等查询 | `osm_sa.c`（+ `osm_sa_*_record.c`） | 只做职责概览 |
-| QoS / 分区 / 组播 / 拥塞控制 | P_Key 分区、组播组、拥塞控制等扩展能力 | `osm_qos.c` / `osm_pkey.c` / `osm_mcast_mgr.c` / `osm_congestion_control.c` | 只做职责概览 |
-| 性能监控 | 周期性采集子网性能计数器 | `osm_perfmgr.c` | 只做职责概览 |
-| 事件插件 | 将 SM 事件上报给外部订阅者 | `osm_event_plugin.c` | 只做职责概览 |
+| 模块                   | 职责                        | 关键文件                                                                        | 本文是否深入 |
+| -------------------- | ------------------------- | --------------------------------------------------------------------------- | ------ |
+| 状态机                  | 驱动 SM 从发现到稳态的重配置循环        | `osm_sm.c`、`osm_sm_state_mgr.c`                                             | 本文深入   |
+| 拓扑数据模型               | 子网、节点、端口、交换机的内存表示         | `osm_subnet.c`、`osm_node.c`、`osm_port.c`、`osm_switch.c`                     | 本文深入   |
+| LID 分配               | 为每个端口分配唯一 16 位 LID        | `osm_lid_mgr.c`                                                             | 本文深入   |
+| 单播路由(minhop)         | 计算任意两点间最短路径               | `osm_ucast_mgr.c`                                                           | 本文深入   |
+| LFT 下发               | 把算好的线性转发表写入交换机            | `osm_lin_fwd_rcv.c`                                                         | 本文深入   |
+| MAD 收发(libvendor)    | 构造并收发 MAD，屏蔽 QP0/QP1 底层细节 | `libvendor/`（`osm_vendor_ibumad.c`）                                         | 只做职责概览 |
+| SA                   | 子网管理服务，响应 PathRecord 等查询  | `osm_sa.c`（+ `osm_sa_*_record.c`）                                           | 只做职责概览 |
+| QoS / 分区 / 组播 / 拥塞控制 | P_Key 分区、组播组、拥塞控制等扩展能力    | `osm_qos.c` / `osm_pkey.c` / `osm_mcast_mgr.c` / `osm_congestion_control.c` | 只做职责概览 |
+| 性能监控                 | 周期性采集子网性能计数器              | `osm_perfmgr.c`                                                             | 只做职责概览 |
+| 事件插件                 | 将 SM 事件上报给外部订阅者           | `osm_event_plugin.c`                                                        | 只做职责概览 |
 
 后续章节编排遵循这条闭环：第 2 章讲原理——SM 如何完成一条主流程；第 3 章逐段跟读源码；第 4 章收尾。
 
