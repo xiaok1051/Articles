@@ -250,6 +250,8 @@ if (sm_state_mgr_send_master_sm_info_req(sm, sm_state))
 
 「比较」则发生在 `osm_state_mgr.c` 的 `state_mgr_get_highest_sm`（行 908）：它遍历 `sm_guid_tbl` 里所有远端 SM，用 `osm_sm_is_greater_than` 比「优先级、GUID」二元组，优先级高者胜、相同再比 GUID——这就是 `sm_priority` 生效之处。standby 并非被动等待，而是定时主动探测，超时后重新尝试竞争 master。
 
+![启动与状态机调用链](../images/23-opensm-code-startup.png)
+
 呼应原理篇 2.1：原理篇描述的四状态与五条迁移主线，在此逐一对应到 `osm_sm_state_mgr_process` 的 switch-case；「选举」不是投票，正是上面「`sm_state_mgr_send_master_sm_info_req` 探测 + `state_mgr_get_highest_sm` 比优先级」的组合。
 
 ### 3.2 拓扑发现
@@ -381,6 +383,8 @@ p_node->sw = p_sw;
 osm_switch_set_switch_info(p_sw, p_si);
 ```
 
+![sweep 逐跳发现流程](../images/23-opensm-code-sweep.png)
+
 呼应原理篇 2.2：原理篇所述的「DR SMP 逐跳探路、广度优先展开、读回三类属性建树」，在此逐条落到 `osm_dr_path_extend` 的路径延伸、`osm_req_get(IB_MAD_ATTR_NODE_INFO)` 的逐跳请求 NodeInfo、以及 ni / pi / si 三个 handler 把 NodeInfo / PortInfo / SwitchInfo 填进 `osm_subn_t → osm_node_t → osm_port_t → osm_switch_t` 的过程。
 
 ### 3.3 LID 与路由
@@ -449,6 +453,8 @@ if (p_sw->hops[lid_ho][0] > num_hops)
 
 矩阵收敛后，`ucast_mgr_build_lfts`（行 860）将跳数矩阵转换为 LFT：对每台交换机调 `ucast_mgr_process_tbl`（行 357），遍历所有端口、每个 LMC 偏移，调 `osm_switch_recommend_path`（osm_switch.c 行 234）从「跳数等于最少跳数的端口」中挑选路径数最少的一个，将结果写入 `p_sw->new_lft[lid_ho] = port`（行 302）。最后 `osm_ucast_mgr_set_fwd_tables`（行 1050）先下发 SwitchInfo 的 lin_top，再 `ucast_mgr_pipeline_fwd_tbl` 把 new_lft 逐块交给交换机——下发细节留待 3.4。
 
+![LID 分配到 LFT 生成管线](../images/23-opensm-code-routing.png)
+
 呼应原理篇 2.3：原理篇的「连续块分配 LID」「minhop 取最短跳数」「LID→出端口落成 LFT」，在此分别落到 `lid_mgr_find_free_lid_range` 的 LMC 对齐分配、`ucast_mgr_process_neighbor` 的松弛、`ucast_mgr_process_tbl` 里 `new_lft[lid] = port` 的写入。
 
 ### 3.4 LFT 下发与稳态
@@ -512,6 +518,8 @@ if (sm->p_subn->opt.sweep_on_trap) {
 `SM_LINK_STATE_CHANGED_TRAP` 即 128、`SM_LOCAL_CHANGES_TRAP` 即 144（定义在 include/iba/ib_types.h 行 7999 / 8003），二者置 `force_heavy_sweep` 并 `osm_sm_signal(OSM_SIGNAL_SWEEP)` 唤醒 sweeper——这正是原理篇 2.4 所述的 trap 128/144 触发重扫，且受 `sweep_on_trap` 开关控制。另外 trap 129/130/131（链路完整性阈值 / 缓冲溢出 / 看门狗超时）走 `physp_change_trap` 分支（行 487-499），对反复上报的 noisy 端口调 `shutup_noisy_port` 标记不健康，不一定触发全量重扫；trap 144 还有一个特例——若只是节点描述更新，则仅 `osm_req_get_node_desc` 重读描述、跳过重扫（行 551-568）。
 
 **SA 常驻。** 稳态下 SA 与 SM 同进程常驻：`osm_sa_init`（osm_sa.c 行 159）构造 SA 并初始化 mad_ctrl，`osm_sa_bind`（行 327）绑定到 QP1，之后 PathRecord 等查询在 `osm_sa_path_record.c` 处理——细节不在本文展开。
+
+![trap 触发重扫回环](../images/23-opensm-code-trap-loop.png)
 
 呼应原理篇 2.4：原理篇的「分块写回」「逐块回确认」「trap 128/144 触发重扫」「SA 常驻」，在此逐条落到 `set_lft_block` 的 64 字节分块、`osm_lft_rcv_process` 的写回 lft、`trap_rcv_process_request` 末尾的 `sweep_on_trap` 分支、以及 `osm_sa_bind` 的 QP1 绑定。
 

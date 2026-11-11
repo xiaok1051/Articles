@@ -1,0 +1,73 @@
+<mxfile host="65bd71144e">
+    <diagram name="Page-1" id="opensm-code-startup">
+        <mxGraphModel dx="944" dy="744" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="680" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" parent="1" style="text;html=1;fontSize=20;fontStyle=1;align=center;fontColor=#1a1a1a;" value="源码篇 3.1：启动与状态机调用链" vertex="1">
+                    <mxGeometry height="30" width="400" x="250" y="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="laneL" parent="1" style="text;html=1;fontSize=12;align=center;fontColor=#888888;" value="main() 启动线程" vertex="1">
+                    <mxGeometry height="20" width="250" x="110" y="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="laneR" parent="1" style="text;html=1;fontSize=12;align=center;fontColor=#888888;" value="sweeper 常驻线程" vertex="1">
+                    <mxGeometry height="20" width="290" x="560" y="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="m1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;main()（opensm/main.c）&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="44" width="250" x="110" y="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="m2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;osm_opensm_init&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;配置解析 · 子网对象 · libvendor&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="64" width="250" x="110" y="154" as="geometry"/>
+                </mxCell>
+                <mxCell id="m3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;osm_opensm_init_finish&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;构造 SM / SA 核心对象&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="250" x="110" y="244" as="geometry"/>
+                </mxCell>
+                <mxCell id="m4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=13;" value="&lt;b&gt;osm_sm_init（osm_sm.c）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;设初始状态 DISCOVERING / NOTACTIVE&lt;br&gt;建 sweeper 线程 + 启动 sweep 定时器&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="86" width="250" x="110" y="314" as="geometry"/>
+                </mxCell>
+                <mxCell id="m5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;osm_opensm_bind&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;绑定到本地端口&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="250" x="110" y="428" as="geometry"/>
+                </mxCell>
+                <mxCell id="m6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;osm_opensm_sweep&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;置 SWEEP 信号唤醒 sweeper&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="250" x="110" y="498" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;sm_sweeper（sweeper 线程）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;阻塞等 signal_event，取出信号位&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="64" width="290" x="560" y="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="s2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;sm_process&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;按信号位分派处理&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="290" x="560" y="178" as="geometry"/>
+                </mxCell>
+                <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;do_sweep（osm_state_mgr.c）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;hop_0 自查询 → DR 逐跳发现&lt;br&gt;heavy sweep：LID → 路由 → LFT&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="76" width="290" x="560" y="248" as="geometry"/>
+                </mxCell>
+                <mxCell id="s4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;" value="&lt;b&gt;osm_sm_state_mgr_process&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;DISCOVERY_COMPLETED → MASTER&lt;br&gt;MASTER_OR_HIGHER → STANDBY&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="76" width="290" x="560" y="352" as="geometry"/>
+                </mxCell>
+                <mxCell id="s5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="&lt;b&gt;polling_callback（standby）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;定时发 SubnGet(SMInfo) 探测 master&lt;br&gt;重试超限 → 判定失效&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="76" width="290" x="560" y="456" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;" value="&lt;b&gt;sm_sweep 定时器回调&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;每 sweep_interval 秒触发&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="56" width="250" x="110" y="566" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" edge="1" parent="1" source="m1" target="m2" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e2" edge="1" parent="1" source="m2" target="m3" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e3" edge="1" parent="1" source="m3" target="m4" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e4" edge="1" parent="1" source="m4" target="m5" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e5" edge="1" parent="1" source="m5" target="m6" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e6" edge="1" parent="1" source="s1" target="s2" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e7" edge="1" parent="1" source="s2" target="s3" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e8" edge="1" parent="1" source="s3" target="s4" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e9" edge="1" parent="1" source="s4" target="s5" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e10" edge="1" parent="1" source="s5" target="s2" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" value="POLLING_TIMEOUT：回 Discovering 重新竞选">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e11" edge="1" parent="1" source="m6" target="s1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="OSM_SIGNAL_SWEEP（首次）">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e12" edge="1" parent="1" source="t1" target="s1" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 4;strokeColor=#999999;fontColor=#999999;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="周期性 OSM_SIGNAL_SWEEP">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

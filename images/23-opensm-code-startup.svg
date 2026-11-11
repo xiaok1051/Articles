@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="680" viewBox="0 0 900 680" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="900" height="680" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#666666"/>
+    </marker>
+  </defs>
+
+  <!-- 标题 -->
+  <text x="450" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">源码篇 3.1：启动与状态机调用链</text>
+
+  <!-- 泳道标签 -->
+  <text x="235" y="74" text-anchor="middle" font-size="12" fill="#888888">main() 启动线程</text>
+  <text x="705" y="74" text-anchor="middle" font-size="12" fill="#888888">sweeper 常驻线程</text>
+
+  <!-- 左列：main() 调用链 -->
+  <rect x="110" y="84" width="250" height="44" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="235" y="111" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">main()（opensm/main.c）</text>
+
+  <rect x="110" y="154" width="250" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="235" y="178" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">osm_opensm_init</text>
+  <text x="235" y="198" text-anchor="middle" font-size="11" fill="#444444">配置解析 · 子网对象 · libvendor</text>
+
+  <rect x="110" y="244" width="250" height="44" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="235" y="265" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">osm_opensm_init_finish</text>
+  <text x="235" y="283" text-anchor="middle" font-size="11" fill="#444444">构造 SM / SA 核心对象</text>
+
+  <rect x="110" y="314" width="250" height="86" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="235" y="338" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">osm_sm_init（osm_sm.c）</text>
+  <text x="235" y="360" text-anchor="middle" font-size="11" fill="#444444">设初始状态 DISCOVERING / NOTACTIVE</text>
+  <text x="235" y="380" text-anchor="middle" font-size="11" fill="#444444">建 sweeper 线程 + 启动 sweep 定时器</text>
+
+  <rect x="110" y="428" width="250" height="44" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="235" y="449" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">osm_opensm_bind</text>
+  <text x="235" y="467" text-anchor="middle" font-size="11" fill="#444444">绑定到本地端口</text>
+
+  <rect x="110" y="498" width="250" height="44" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="235" y="519" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">osm_opensm_sweep</text>
+  <text x="235" y="537" text-anchor="middle" font-size="11" fill="#444444">置 SWEEP 信号唤醒 sweeper</text>
+
+  <!-- 左列纵向箭头 -->
+  <line x1="235" y1="128" x2="235" y2="152" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="235" y1="218" x2="235" y2="242" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="235" y1="288" x2="235" y2="312" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="235" y1="400" x2="235" y2="426" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="235" y1="472" x2="235" y2="496" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 右列：sweeper 线程内循环 -->
+  <rect x="560" y="84" width="290" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="705" y="108" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">sm_sweeper（sweeper 线程）</text>
+  <text x="705" y="128" text-anchor="middle" font-size="11" fill="#444444">阻塞等 signal_event，取出信号位</text>
+
+  <rect x="560" y="178" width="290" height="44" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="705" y="199" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">sm_process</text>
+  <text x="705" y="217" text-anchor="middle" font-size="11" fill="#444444">按信号位分派处理</text>
+
+  <rect x="560" y="248" width="290" height="76" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="705" y="272" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">do_sweep（osm_state_mgr.c）</text>
+  <text x="705" y="294" text-anchor="middle" font-size="11" fill="#444444">hop_0 自查询 → DR 逐跳发现</text>
+  <text x="705" y="312" text-anchor="middle" font-size="11" fill="#444444">heavy sweep：LID → 路由 → LFT</text>
+
+  <rect x="560" y="352" width="290" height="76" rx="8" ry="8" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.5"/>
+  <text x="705" y="376" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">osm_sm_state_mgr_process</text>
+  <text x="705" y="398" text-anchor="middle" font-size="11" fill="#444444">DISCOVERY_COMPLETED → MASTER</text>
+  <text x="705" y="416" text-anchor="middle" font-size="11" fill="#444444">MASTER_OR_HIGHER → STANDBY</text>
+
+  <rect x="560" y="456" width="290" height="76" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="705" y="480" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">polling_callback（standby）</text>
+  <text x="705" y="502" text-anchor="middle" font-size="11" fill="#444444">定时发 SubnGet(SMInfo) 探测 master</text>
+  <text x="705" y="520" text-anchor="middle" font-size="11" fill="#444444">重试超限 → 判定失效</text>
+
+  <!-- 右列纵向箭头 -->
+  <line x1="705" y1="148" x2="705" y2="176" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="705" y1="222" x2="705" y2="246" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="705" y1="324" x2="705" y2="350" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="705" y1="428" x2="705" y2="454" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- standby 轮询超时回环 -->
+  <polyline points="560,494 522,494 522,200 558,200" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="300" y="330" width="216" height="20" fill="#ffffff"/>
+  <text x="514" y="345" text-anchor="end" font-size="10.5" fill="#777777">POLLING_TIMEOUT：回 Discovering 重新竞选</text>
+
+  <!-- 首次 sweep 触发管道 -->
+  <polyline points="360,520 500,520 500,116 558,116" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="352" y="348" width="140" height="20" fill="#ffffff"/>
+  <text x="492" y="363" text-anchor="end" font-size="10.5" fill="#777777">OSM_SIGNAL_SWEEP（首次）</text>
+
+  <!-- 定时器：周期性触发（虚线） -->
+  <rect x="110" y="566" width="250" height="56" rx="8" ry="8" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="235" y="590" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a1a">sm_sweep 定时器回调</text>
+  <text x="235" y="610" text-anchor="middle" font-size="11" fill="#444444">每 sweep_interval 秒触发</text>
+  <polyline points="360,594 486,594 486,140 558,140" fill="none" stroke="#999999" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <rect x="338" y="418" width="148" height="20" fill="#ffffff"/>
+  <text x="478" y="433" text-anchor="end" font-size="10.5" fill="#999999">周期性 OSM_SIGNAL_SWEEP</text>
+</svg>

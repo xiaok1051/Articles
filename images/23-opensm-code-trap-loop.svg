@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="900" height="620" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#666666"/>
+    </marker>
+  </defs>
+
+  <!-- 标题 -->
+  <text x="450" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">源码篇 3.4：trap 触发重扫的稳态回环</text>
+
+  <!-- 稳态 -->
+  <rect x="300" y="60" width="300" height="60" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="450" y="86" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">稳态：SM 停在 Master</text>
+  <text x="450" y="108" text-anchor="middle" font-size="11" fill="#444444">LFT 全部落位 · SA 常驻应答</text>
+
+  <!-- trap 接收 -->
+  <rect x="300" y="150" width="300" height="72" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="450" y="174" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">设备上报 trap（QP1 Notice）</text>
+  <text x="450" y="196" text-anchor="middle" font-size="11" fill="#444444">osm_trap_rcv_process →</text>
+  <text x="450" y="214" text-anchor="middle" font-size="11" fill="#444444">trap_rcv_process_request：log_trap_info</text>
+
+  <!-- 判断 -->
+  <polygon points="450,250 565,292 450,334 335,292" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
+  <text x="450" y="287" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">trap ∈ {128, 144}</text>
+  <text x="450" y="305" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">且 sweep_on_trap 开？</text>
+
+  <!-- 否：noisy port 处理 -->
+  <rect x="620" y="256" width="240" height="72" rx="8" ry="8" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="740" y="278" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a1a">trap 129 / 130 / 131 等</text>
+  <text x="740" y="298" text-anchor="middle" font-size="11" fill="#444444">shutup_noisy_port 标记</text>
+  <text x="740" y="316" text-anchor="middle" font-size="11" fill="#444444">不触发全量重扫</text>
+
+  <!-- 是：置标志 + 唤醒 -->
+  <rect x="300" y="364" width="300" height="64" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5"/>
+  <text x="450" y="388" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#8b2c28">force_heavy_sweep = TRUE</text>
+  <text x="450" y="410" text-anchor="middle" font-size="11" fill="#444444">osm_sm_signal(OSM_SIGNAL_SWEEP) 唤醒 sweeper</text>
+
+  <!-- heavy sweep -->
+  <rect x="300" y="456" width="300" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="450" y="480" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">sweeper 醒来 → do_sweep（heavy）</text>
+  <text x="450" y="502" text-anchor="middle" font-size="11" fill="#444444">重扫拓扑 → LID → 路由 → set_lft_block</text>
+
+  <!-- 主干箭头 -->
+  <line x1="450" y1="120" x2="450" y2="148" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="450" y1="222" x2="450" y2="248" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="450" y1="334" x2="450" y2="362" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="450" y1="428" x2="450" y2="454" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 判断分支标签 -->
+  <line x1="565" y1="292" x2="618" y2="292" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="588" y="284" text-anchor="middle" font-size="11" fill="#777777">否</text>
+  <text x="460" y="352" text-anchor="start" font-size="11" fill="#777777">是</text>
+
+  <!-- noisy 分支回到稳态 -->
+  <polyline points="740,256 740,90 602,90" fill="none" stroke="#999999" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <rect x="746" y="160" width="108" height="20" fill="#ffffff"/>
+  <text x="750" y="175" text-anchor="start" font-size="11" fill="#999999">记录后回到稳态</text>
+
+  <!-- 左侧回环：回确认 -->
+  <polyline points="300,488 100,488 100,90 298,90" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="58" y="262" width="180" height="40" fill="#ffffff"/>
+  <text x="148" y="280" text-anchor="middle" font-size="11" fill="#555555">osm_lft_rcv_process</text>
+  <text x="148" y="296" text-anchor="middle" font-size="10.5" fill="#777777">逐块回确认写回 lft</text>
+</svg>
