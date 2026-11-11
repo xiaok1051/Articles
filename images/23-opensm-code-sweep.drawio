@@ -17,7 +17,7 @@
                     <mxGeometry height="56" width="300" x="300" y="152" as="geometry"/>
                 </mxCell>
                 <mxCell id="C" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="还有未探测端口？" vertex="1">
-                    <mxGeometry height="80" width="190" x="355" y="240" as="geometry"/>
+                    <mxGeometry height="80" width="210" x="345" y="240" as="geometry"/>
                 </mxCell>
                 <mxCell id="D" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=12;" value="&lt;b&gt;sweep 完成，发出信号&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;DISCOVERY_COMPLETED → 转 MASTER&lt;br&gt;或 MASTER_OR_HIGHER → 转 STANDBY&lt;/font&gt;" vertex="1">
                     <mxGeometry height="76" width="270" x="590" y="248" as="geometry"/>
@@ -29,7 +29,7 @@
                     <mxGeometry height="76" width="300" x="300" y="456" as="geometry"/>
                 </mxCell>
                 <mxCell id="G" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="是交换机？" vertex="1">
-                    <mxGeometry height="80" width="190" x="355" y="548" as="geometry"/>
+                    <mxGeometry height="80" width="210" x="345" y="548" as="geometry"/>
                 </mxCell>
                 <mxCell id="H" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;请求 Get(SwitchInfo)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;si_rcv_process_new：osm_switch_new&lt;br&gt;入 sw_guid_tbl，收紧 max_ucast_lid_ho&lt;/font&gt;" vertex="1">
                     <mxGeometry height="80" width="270" x="590" y="548" as="geometry"/>

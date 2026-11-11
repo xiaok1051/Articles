@@ -112,11 +112,11 @@
 
   <!-- 列间衔接：① → ②（底部绕行） -->
   <polyline points="177,562 177,600 449,600 449,564" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <rect x="253" y="580" width="120" height="18" fill="#ffffff"/>
-  <text x="313" y="594" text-anchor="middle" font-size="11" fill="#777777">拓扑 + LID 就绪</text>
+  <rect x="253" y="604" width="120" height="18" fill="#ffffff"/>
+  <text x="313" y="618" text-anchor="middle" font-size="11" fill="#777777">拓扑 + LID 就绪</text>
 
   <!-- 列间衔接：② → ③（顶部绕行） -->
-  <polyline points="449,114 449,98 721,98 721,112" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <rect x="533" y="78" width="104" height="18" fill="#ffffff"/>
-  <text x="585" y="92" text-anchor="middle" font-size="11" fill="#777777">跳数矩阵收敛</text>
+  <polyline points="449,114 449,100 721,100 721,112" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="588" y="74" width="104" height="18" fill="#ffffff"/>
+  <text x="640" y="88" text-anchor="middle" font-size="11" fill="#777777">跳数矩阵收敛</text>
 </svg>

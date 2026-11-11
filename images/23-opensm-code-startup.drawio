@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="opensm-code-startup">
-        <mxGraphModel dx="944" dy="744" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="680" math="0" shadow="0">
+        <mxGraphModel dx="944" dy="744" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="700" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -58,13 +58,13 @@
                 <mxCell id="e7" edge="1" parent="1" source="s2" target="s3" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
                 <mxCell id="e8" edge="1" parent="1" source="s3" target="s4" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
                 <mxCell id="e9" edge="1" parent="1" source="s4" target="s5" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
-                <mxCell id="e10" edge="1" parent="1" source="s5" target="s2" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;" value="POLLING_TIMEOUT：回 Discovering 重新竞选">
+                <mxCell id="e10" edge="1" parent="1" source="s5" target="s2" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" value="POLLING_TIMEOUT：回 Discovering 重新竞选">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="e11" edge="1" parent="1" source="m6" target="s1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="OSM_SIGNAL_SWEEP（首次）">
+                <mxCell id="e11" edge="1" parent="1" source="m6" target="s1" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="首次 SWEEP 信号">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="e12" edge="1" parent="1" source="t1" target="s1" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 4;strokeColor=#999999;fontColor=#999999;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="周期性 OSM_SIGNAL_SWEEP">
+                <mxCell id="e12" edge="1" parent="1" source="t1" target="s1" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;dashPattern=6 4;strokeColor=#999999;fontColor=#999999;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" value="周期性触发">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
             </root>
