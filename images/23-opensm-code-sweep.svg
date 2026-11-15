@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="680" viewBox="0 0 900 680" font-family="PingFang SC, Microsoft YaHei, sans-serif">
-  <rect x="0" y="0" width="900" height="680" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="900" height="650" fill="#ffffff"/>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
       <path d="M 0 0 L 10 5 L 0 10 Z" fill="#666666"/>
@@ -20,6 +20,12 @@
   <text x="450" y="84" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">do_sweep → state_mgr_sweep_hop_0</text>
   <text x="450" y="106" text-anchor="middle" font-size="11" fill="#444444">清 node / port / sw 计数 · in_sweep_hop_0 = TRUE</text>
 
+  <!-- D：sweep 完成（右上终止框） -->
+  <rect x="590" y="60" width="270" height="76" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="725" y="86" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">sweep 完成，发出信号</text>
+  <text x="725" y="108" text-anchor="middle" font-size="11" fill="#444444">DISCOVERY_COMPLETED → 转 MASTER</text>
+  <text x="725" y="126" text-anchor="middle" font-size="11" fill="#444444">或 MASTER_OR_HIGHER → 转 STANDBY</text>
+
   <!-- B：hop 0 自查询 -->
   <rect x="300" y="152" width="300" height="56" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
   <text x="450" y="176" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">Get(NodeInfo)，hop = 0（查自己）</text>
@@ -29,12 +35,6 @@
   <polygon points="450,240 555,280 450,320 345,280" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
   <text x="450" y="285" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">还有未探测</text>
   <text x="450" y="302" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">端口？</text>
-
-  <!-- 否：sweep 完成 -->
-  <rect x="590" y="248" width="270" height="76" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="725" y="272" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">sweep 完成，发出信号</text>
-  <text x="725" y="294" text-anchor="middle" font-size="11" fill="#444444">DISCOVERY_COMPLETED → 转 MASTER</text>
-  <text x="725" y="312" text-anchor="middle" font-size="11" fill="#444444">或 MASTER_OR_HIGHER → 转 STANDBY</text>
 
   <!-- E：路径扩展，请求对端 -->
   <rect x="300" y="352" width="300" height="76" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
@@ -52,11 +52,11 @@
   <polygon points="450,548 555,588 450,628 345,588" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5"/>
   <text x="450" y="593" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">是交换机？</text>
 
-  <!-- 是：请求 SwitchInfo -->
+  <!-- H：请求 SwitchInfo -->
   <rect x="590" y="548" width="270" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="725" y="572" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">请求 Get(SwitchInfo)</text>
-  <text x="725" y="594" text-anchor="middle" font-size="11" fill="#444444">si_rcv_process_new：osm_switch_new</text>
-  <text x="725" y="612" text-anchor="middle" font-size="11" fill="#444444">入 sw_guid_tbl，收紧 max_ucast_lid_ho</text>
+  <text x="725" y="573" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">请求 Get(SwitchInfo)</text>
+  <text x="725" y="595" text-anchor="middle" font-size="11" fill="#444444">si_rcv_process_new：osm_switch_new</text>
+  <text x="725" y="613" text-anchor="middle" font-size="11" fill="#444444">入 sw_guid_tbl，收紧 max_ucast_lid_ho</text>
 
   <!-- 主干箭头 -->
   <line x1="450" y1="124" x2="450" y2="150" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
@@ -65,22 +65,24 @@
   <line x1="450" y1="428" x2="450" y2="454" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
   <line x1="450" y1="532" x2="450" y2="546" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-  <!-- C 各分支 -->
-  <line x1="555" y1="280" x2="588" y2="280" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="568" y="272" text-anchor="middle" font-size="11" fill="#777777">否</text>
-  <text x="460" y="342" text-anchor="start" font-size="11" fill="#777777">是</text>
+  <!-- C 否分支：右行折上进入「sweep 完成」 -->
+  <polyline points="555,280 640,280 640,98 588,98" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="598" y="272" text-anchor="middle" font-size="11" fill="#777777">否</text>
 
-  <!-- G 各分支 -->
+  <!-- C 是分支 -->
+  <text x="461" y="340" text-anchor="start" font-size="11" fill="#777777">是</text>
+
+  <!-- G 是分支 -->
   <line x1="555" y1="588" x2="588" y2="588" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="566" y="580" text-anchor="middle" font-size="11" fill="#777777">是</text>
+  <text x="571" y="580" text-anchor="middle" font-size="11" fill="#777777">是</text>
 
-  <!-- 右侧回环：处理完交换机，返回判断 C -->
-  <polyline points="860,588 880,588 880,280 557,280" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <rect x="786" y="418" width="88" height="20" fill="#ffffff"/>
-  <text x="872" y="433" text-anchor="end" font-size="11" fill="#777777">处理完继续判断</text>
+  <!-- 右侧回环：H 处理完 → 斜入判断 C 右下棱 -->
+  <polyline points="860,588 880,588 880,300 508,300" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="640" y="290" width="150" height="20" fill="#ffffff"/>
+  <text x="715" y="305" text-anchor="middle" font-size="11" fill="#777777">处理完继续判断</text>
 
-  <!-- 左侧回环：非交换机，返回判断 C -->
-  <polyline points="345,588 320,588 320,280 343,280" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <rect x="254" y="432" width="64" height="20" fill="#ffffff"/>
-  <text x="314" y="447" text-anchor="end" font-size="11" fill="#777777">否：返回</text>
+  <!-- 左侧回环：非交换机 → 返回判断 C -->
+  <polyline points="345,588 318,588 318,280 343,280" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="238" y="425" width="70" height="20" fill="#ffffff"/>
+  <text x="306" y="440" text-anchor="end" font-size="11" fill="#777777">否：返回</text>
 </svg>
