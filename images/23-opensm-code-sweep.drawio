@@ -1,66 +1,59 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="opensm-code-sweep">
-        <mxGraphModel dx="944" dy="744" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="650" math="0" shadow="0">
+        <mxGraphModel dx="944" dy="744" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="736" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="2" parent="1" style="text;html=1;fontSize=20;fontStyle=1;align=center;fontColor=#1a1a1a;" value="源码篇 3.2：sweep 逐跳发现流程" vertex="1">
                     <mxGeometry height="30" width="400" x="250" y="14" as="geometry"/>
                 </mxCell>
-                <mxCell id="note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;" value="&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;全程经 DR SMP（QP0）&lt;/font&gt;&lt;/b&gt;&lt;br&gt;请求与响应异步往返&lt;br&gt;响应在 dispatcher 回调中处理" vertex="1">
-                    <mxGeometry height="76" width="200" x="50" y="60" as="geometry"/>
-                </mxCell>
                 <mxCell id="A" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;do_sweep → state_mgr_sweep_hop_0&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;清 node / port / sw 计数 · in_sweep_hop_0 = TRUE&lt;/font&gt;" vertex="1">
-                    <mxGeometry height="64" width="300" x="300" y="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="D" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=12;" value="&lt;b&gt;sweep 完成，发出信号&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;DISCOVERY_COMPLETED → 转 MASTER&lt;br&gt;或 MASTER_OR_HIGHER → 转 STANDBY&lt;/font&gt;" vertex="1">
-                    <mxGeometry height="76" width="270" x="590" y="60" as="geometry"/>
+                    <mxGeometry height="58" width="300" x="360" y="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="B" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;Get(NodeInfo)，hop = 0（查自己）&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;ni handler 建新节点 → 再请求自己 PortInfo&lt;/font&gt;" vertex="1">
-                    <mxGeometry height="56" width="300" x="300" y="152" as="geometry"/>
+                    <mxGeometry height="54" width="300" x="360" y="162" as="geometry"/>
                 </mxCell>
                 <mxCell id="C" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="还有未探测端口？" vertex="1">
-                    <mxGeometry height="80" width="210" x="345" y="240" as="geometry"/>
+                    <mxGeometry height="76" width="210" x="405" y="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="D" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=12;" value="&lt;b&gt;sweep 完成，发出信号&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;DISCOVERY_COMPLETED → MASTER&lt;br&gt;MASTER_OR_HIGHER → STANDBY&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="76" width="210" x="680" y="240" as="geometry"/>
                 </mxCell>
                 <mxCell id="E" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;pi_rcv_process_switch_ext_port&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;osm_dr_path_extend（path, port）路径加一跳&lt;br&gt;→ Get(NodeInfo) 请求对端&lt;/font&gt;" vertex="1">
-                    <mxGeometry height="76" width="300" x="300" y="352" as="geometry"/>
+                    <mxGeometry height="72" width="300" x="360" y="346" as="geometry"/>
                 </mxCell>
                 <mxCell id="F" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;对端 ni_rcv_process_new&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;osm_node_new / osm_port_new&lt;br&gt;插入 node_guid_tbl / port_guid_tbl&lt;/font&gt;" vertex="1">
-                    <mxGeometry height="76" width="300" x="300" y="456" as="geometry"/>
+                    <mxGeometry height="72" width="300" x="360" y="444" as="geometry"/>
                 </mxCell>
                 <mxCell id="G" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" value="是交换机？" vertex="1">
-                    <mxGeometry height="80" width="210" x="345" y="548" as="geometry"/>
+                    <mxGeometry height="76" width="210" x="405" y="542" as="geometry"/>
                 </mxCell>
                 <mxCell id="H" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" value="&lt;b&gt;请求 Get(SwitchInfo)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:11px&quot;&gt;si_rcv_process_new：osm_switch_new&lt;br&gt;入 sw_guid_tbl，收紧 max_ucast_lid_ho&lt;/font&gt;" vertex="1">
-                    <mxGeometry height="80" width="270" x="590" y="548" as="geometry"/>
+                    <mxGeometry height="78" width="300" x="360" y="642" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;" value="&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;全程经 DR SMP（QP0）&lt;/font&gt;&lt;/b&gt;&lt;br&gt;请求与响应异步往返&lt;br&gt;响应在 dispatcher 回调中处理" vertex="1">
+                    <mxGeometry height="90" width="210" x="680" y="600" as="geometry"/>
                 </mxCell>
                 <mxCell id="e1" edge="1" parent="1" source="A" target="B" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
                 <mxCell id="e2" edge="1" parent="1" source="B" target="C" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
-                <mxCell id="e3" edge="1" parent="1" source="C" target="D" value="否" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="640" y="280"/>
-                            <mxPoint x="640" y="98"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
+                <mxCell id="e3" edge="1" parent="1" source="C" target="D" value="否" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;"/>
                 <mxCell id="e4" edge="1" parent="1" source="C" target="E" value="是" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
                 <mxCell id="e5" edge="1" parent="1" source="E" target="F" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
                 <mxCell id="e6" edge="1" parent="1" source="F" target="G" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
-                <mxCell id="e7" edge="1" parent="1" source="G" target="H" value="是" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;"/>
-                <mxCell id="e8" edge="1" parent="1" source="G" target="C" value="否：返回" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;">
+                <mxCell id="e7" edge="1" parent="1" source="G" target="H" value="是" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;"/>
+                <mxCell id="e8" edge="1" parent="1" source="G" target="C" value="否：返回" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;endArrow=none;">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="318" y="588"/>
-                            <mxPoint x="318" y="280"/>
+                            <mxPoint x="270" y="580"/>
+                            <mxPoint x="270" y="278"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e9" edge="1" parent="1" source="H" target="C" value="处理完继续判断" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;entryX=0.767;entryY=0.75;">
+                <mxCell id="e9" edge="1" parent="1" source="H" target="C" value="处理完继续判断" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="880" y="588"/>
-                            <mxPoint x="880" y="300"/>
+                            <mxPoint x="270" y="681"/>
+                            <mxPoint x="270" y="278"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
