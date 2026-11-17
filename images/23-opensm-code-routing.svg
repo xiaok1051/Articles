@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="640" viewBox="0 0 900 640" font-family="PingFang SC, Microsoft YaHei, sans-serif">
-  <rect x="0" y="0" width="900" height="640" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="540" viewBox="0 0 900 540" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <rect x="0" y="0" width="900" height="540" fill="#ffffff"/>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
       <path d="M 0 0 L 10 5 L 0 10 Z" fill="#666666"/>
@@ -9,114 +9,94 @@
   <!-- 标题 -->
   <text x="450" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">源码篇 3.3：LID 分配 → minhop 路由 → LFT 生成</text>
 
-  <!-- 阶段标题栏 -->
-  <rect x="50" y="56" width="255" height="30" rx="6" ry="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="177" y="76" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">① LID 分配 · osm_lid_mgr.c</text>
-  <rect x="322" y="56" width="255" height="30" rx="6" ry="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="449" y="76" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">② 路由计算 · minhop</text>
-  <rect x="594" y="56" width="255" height="30" rx="6" ry="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="721" y="76" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">③ LFT 生成与下发</text>
+  <!-- 阶段表头 -->
+  <rect x="60" y="56" width="220" height="30" rx="6" ry="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="170" y="76" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">① LID 分配 · osm_lid_mgr.c</text>
+  <rect x="335" y="56" width="220" height="30" rx="6" ry="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="445" y="76" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">② 路由计算 · minhop</text>
+  <rect x="610" y="56" width="220" height="30" rx="6" ry="6" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="720" y="76" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">③ LFT 生成与下发</text>
 
-  <!-- 第①列（自上而下） -->
-  <rect x="50" y="114" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="177" y="138" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_lid_mgr_process_sm</text>
-  <text x="177" y="160" text-anchor="middle" font-size="11" fill="#444444">复位 port_lid_tbl 与空闲区间</text>
+  <!-- 列间衔接箭头 -->
+  <line x1="283" y1="71" x2="332" y2="71" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="307" y="64" text-anchor="middle" font-size="11" fill="#777777">LID 就绪</text>
+  <line x1="558" y1="71" x2="607" y2="71" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="582" y="64" text-anchor="middle" font-size="11" fill="#777777">矩阵收敛</text>
 
-  <rect x="50" y="192" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="177" y="216" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">lid_mgr_process_our_sm_node</text>
-  <text x="177" y="238" text-anchor="middle" font-size="11" fill="#444444">SM 自身端口先分（写 sm_base_lid）</text>
+  <!-- 第①列 LID 分配 -->
+  <rect x="60" y="110" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="170" y="134" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_lid_mgr_process_sm</text>
+  <text x="170" y="156" text-anchor="middle" font-size="11" fill="#444444">复位 port_lid_tbl 与空闲区间</text>
 
-  <rect x="50" y="270" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="177" y="294" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_lid_mgr_process_subnet</text>
-  <text x="177" y="316" text-anchor="middle" font-size="11" fill="#444444">遍历 port_guid_tbl，跳过自己</text>
+  <rect x="60" y="192" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="170" y="216" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">lid_mgr_process_our_sm_node</text>
+  <text x="170" y="238" text-anchor="middle" font-size="11" fill="#444444">SM 自身端口先分 base LID</text>
 
-  <rect x="50" y="348" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="177" y="372" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">lid_mgr_get_port_lid</text>
-  <text x="177" y="394" text-anchor="middle" font-size="11" fill="#444444">num_lids = 1 &lt;&lt; LMC，port 0 分 1 个</text>
+  <rect x="60" y="274" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="170" y="298" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_lid_mgr_process_subnet</text>
+  <text x="170" y="320" text-anchor="middle" font-size="11" fill="#444444">遍历 port_guid_tbl，跳过自己</text>
 
-  <rect x="50" y="426" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="177" y="450" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">lid_mgr_find_free_lid_range</text>
-  <text x="177" y="472" text-anchor="middle" font-size="11" fill="#444444">按 LMC 对齐找连续空闲区间</text>
+  <rect x="60" y="356" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="170" y="380" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">lid_mgr_get_port_lid</text>
+  <text x="170" y="402" text-anchor="middle" font-size="11" fill="#444444">1&lt;&lt;LMC 个 LID，对齐取连续区间</text>
 
-  <rect x="50" y="504" width="255" height="58" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="177" y="528" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">lid_mgr_set_physp_pi</text>
-  <text x="177" y="550" text-anchor="middle" font-size="11" fill="#444444">Set(PortInfo) 下发 base LID</text>
+  <rect x="60" y="438" width="220" height="64" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="170" y="462" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">lid_mgr_set_physp_pi</text>
+  <text x="170" y="484" text-anchor="middle" font-size="11" fill="#444444">Set(PortInfo) 下发 base LID</text>
 
-  <line x1="177" y1="172" x2="177" y2="190" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="177" y1="250" x2="177" y2="268" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="177" y1="328" x2="177" y2="346" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="177" y1="406" x2="177" y2="424" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="177" y1="484" x2="177" y2="502" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- 第②列 minhop 路由 -->
+  <rect x="335" y="110" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="445" y="134" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_ucast_mgr_process</text>
+  <text x="445" y="156" text-anchor="middle" font-size="11" fill="#444444">setup_all_switches 重置矩阵</text>
 
-  <!-- 第②列（自底向上） -->
-  <rect x="322" y="504" width="255" height="58" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="449" y="528" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">hops[LID][0] = 最少跳数</text>
-  <text x="449" y="550" text-anchor="middle" font-size="11" fill="#444444">每台交换机一张跳数矩阵</text>
+  <rect x="335" y="192" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="445" y="216" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">ucast_mgr_route</text>
+  <text x="445" y="238" text-anchor="middle" font-size="11" fill="#444444">遍历路由引擎链表，minhop 默认</text>
 
-  <rect x="322" y="426" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="449" y="450" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">最多迭代 N−1 轮至收敛</text>
-  <text x="449" y="472" text-anchor="middle" font-size="11" fill="#444444">Bellman-Ford 类多源松弛</text>
+  <rect x="335" y="274" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="445" y="298" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">build_lid_matrices</text>
+  <text x="445" y="320" text-anchor="middle" font-size="11" fill="#444444">hop_0_1 初始化 0 / 1 跳</text>
 
-  <rect x="322" y="348" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="449" y="372" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">process_neighbors 松弛</text>
-  <text x="449" y="394" text-anchor="middle" font-size="11" fill="#444444">吸收邻居最少跳数 + 边权取小</text>
+  <rect x="335" y="356" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="445" y="380" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">process_neighbors 松弛</text>
+  <text x="445" y="402" text-anchor="middle" font-size="11" fill="#444444">吸收邻居跳数，最多 N−1 轮收敛</text>
 
-  <rect x="322" y="270" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="449" y="294" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">build_lid_matrices</text>
-  <text x="449" y="316" text-anchor="middle" font-size="11" fill="#444444">hop_0_1 初始化 0 / 1 跳</text>
+  <rect x="335" y="438" width="220" height="64" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="445" y="462" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">hops[LID][0] = 最少跳数</text>
+  <text x="445" y="484" text-anchor="middle" font-size="11" fill="#444444">每台交换机一张跳数矩阵</text>
 
-  <rect x="322" y="192" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="449" y="216" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">ucast_mgr_route</text>
-  <text x="449" y="238" text-anchor="middle" font-size="11" fill="#444444">遍历路由引擎链表，minhop 默认</text>
+  <!-- 第③列 LFT 生成与下发 -->
+  <rect x="610" y="110" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="720" y="134" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">ucast_mgr_build_lfts</text>
+  <text x="720" y="156" text-anchor="middle" font-size="11" fill="#444444">跳数矩阵 → 每台交换机 LFT</text>
 
-  <rect x="322" y="114" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="449" y="138" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_ucast_mgr_process</text>
-  <text x="449" y="160" text-anchor="middle" font-size="11" fill="#444444">setup_all_switches 重置矩阵</text>
+  <rect x="610" y="192" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="720" y="216" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">ucast_mgr_process_tbl</text>
+  <text x="720" y="238" text-anchor="middle" font-size="11" fill="#444444">遍历端口 × LMC 偏移</text>
 
-  <line x1="449" y1="504" x2="449" y2="486" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="449" y1="426" x2="449" y2="408" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="449" y1="348" x2="449" y2="330" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="449" y1="270" x2="449" y2="252" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="449" y1="192" x2="449" y2="174" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="610" y="274" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="720" y="298" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_switch_recommend_path</text>
+  <text x="720" y="320" text-anchor="middle" font-size="11" fill="#444444">跳数最少中挑路径数最少</text>
 
-  <!-- 第③列（自上而下） -->
-  <rect x="594" y="114" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="721" y="138" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">ucast_mgr_build_lfts</text>
-  <text x="721" y="160" text-anchor="middle" font-size="11" fill="#444444">跳数矩阵 → LFT</text>
+  <rect x="610" y="356" width="220" height="64" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+  <text x="720" y="380" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">new_lft[lid] = port</text>
+  <text x="720" y="402" text-anchor="middle" font-size="11" fill="#444444">逐 LID 结果写入 new_lft</text>
 
-  <rect x="594" y="192" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="721" y="216" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">ucast_mgr_process_tbl</text>
-  <text x="721" y="238" text-anchor="middle" font-size="11" fill="#444444">遍历端口 × LMC 偏移</text>
+  <rect x="610" y="438" width="220" height="64" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <text x="720" y="462" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">set_fwd_tables 分块下发</text>
+  <text x="720" y="484" text-anchor="middle" font-size="11" fill="#444444">每台交换机一份 new_lft，见 3.4</text>
 
-  <rect x="594" y="270" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="721" y="294" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_switch_recommend_path</text>
-  <text x="721" y="316" text-anchor="middle" font-size="11" fill="#444444">跳数最少中挑路径数最少</text>
-
-  <rect x="594" y="348" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="721" y="372" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">new_lft[lid] = port</text>
-  <text x="721" y="394" text-anchor="middle" font-size="11" fill="#444444">结果写入 new_lft</text>
-
-  <rect x="594" y="426" width="255" height="58" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
-  <text x="721" y="450" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">osm_ucast_mgr_set_fwd_tables</text>
-  <text x="721" y="472" text-anchor="middle" font-size="11" fill="#444444">先下发 lin_top 再逐块写</text>
-
-  <rect x="594" y="504" width="255" height="58" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
-  <text x="721" y="528" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">每台交换机一份 new_lft</text>
-  <text x="721" y="550" text-anchor="middle" font-size="11" fill="#444444">分块下发见 3.4</text>
-
-  <line x1="721" y1="172" x2="721" y2="190" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="721" y1="250" x2="721" y2="268" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="721" y1="328" x2="721" y2="346" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="721" y1="406" x2="721" y2="424" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="721" y1="484" x2="721" y2="502" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-  <!-- 列间衔接：① → ②（底部绕行） -->
-  <polyline points="177,562 177,600 449,600 449,564" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <rect x="253" y="604" width="120" height="18" fill="#ffffff"/>
-  <text x="313" y="618" text-anchor="middle" font-size="11" fill="#777777">拓扑 + LID 就绪</text>
-
-  <!-- 列间衔接：② → ③（顶部绕行） -->
-  <polyline points="449,114 449,100 721,100 721,112" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <rect x="588" y="74" width="104" height="18" fill="#ffffff"/>
-  <text x="640" y="88" text-anchor="middle" font-size="11" fill="#777777">跳数矩阵收敛</text>
+  <!-- 列内箭头 -->
+  <line x1="170" y1="174" x2="170" y2="190" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="170" y1="256" x2="170" y2="272" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="170" y1="338" x2="170" y2="354" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="170" y1="420" x2="170" y2="436" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="445" y1="174" x2="445" y2="190" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="445" y1="256" x2="445" y2="272" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="445" y1="338" x2="445" y2="354" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="445" y1="420" x2="445" y2="436" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="720" y1="174" x2="720" y2="190" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="720" y1="256" x2="720" y2="272" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="720" y1="338" x2="720" y2="354" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="720" y1="420" x2="720" y2="436" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
 </svg>
