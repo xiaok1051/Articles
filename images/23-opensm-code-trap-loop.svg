@@ -12,8 +12,8 @@
   <!-- 标题 -->
   <text x="450" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">源码篇 3.4：trap 触发重扫的稳态回环</text>
 
-  <!-- 稳态（宽条，回环的“家”） -->
-  <rect x="210" y="58" width="480" height="62" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
+  <!-- 稳态 -->
+  <rect x="290" y="58" width="320" height="62" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="2"/>
   <text x="450" y="84" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">稳态：SM 停在 Master</text>
   <text x="450" y="106" text-anchor="middle" font-size="11" fill="#444444">LFT 全部落位 · SA 常驻应答</text>
 
@@ -29,9 +29,9 @@
   <text x="450" y="300" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1a1a1a">且 sweep_on_trap 开？</text>
 
   <!-- 否：noisy 处理 -->
-  <rect x="608" y="256" width="252" height="64" rx="8" ry="8" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
-  <text x="734" y="279" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a1a">trap 129 / 130 / 131 等</text>
-  <text x="734" y="298" text-anchor="middle" font-size="11" fill="#444444">shutup_noisy_port 标记，不重扫</text>
+  <rect x="608" y="256" width="222" height="64" rx="8" ry="8" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="719" y="279" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a1a">trap 129 / 130 / 131 等</text>
+  <text x="719" y="298" text-anchor="middle" font-size="11" fill="#444444">shutup_noisy_port 标记，不重扫</text>
 
   <!-- 是：置标志 + 唤醒 -->
   <rect x="290" y="360" width="320" height="58" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5"/>
@@ -55,13 +55,13 @@
   <text x="460" y="350" text-anchor="start" font-size="11" fill="#777777">是</text>
 
   <!-- 右侧回环：noisy 处理完回到稳态 -->
-  <polyline points="734,256 734,88 692,88" fill="none" stroke="#999999" stroke-width="1.4" marker-end="url(#arrow-gray)"/>
-  <rect x="742" y="166" width="108" height="20" fill="#ffffff"/>
-  <text x="744" y="181" text-anchor="start" font-size="11" fill="#999999">记录后回稳态</text>
+  <polyline points="719,256 719,89 612,89" fill="none" stroke="#999999" stroke-width="1.4" marker-end="url(#arrow-gray)"/>
+  <rect x="727" y="166" width="108" height="20" fill="#ffffff"/>
+  <text x="729" y="181" text-anchor="start" font-size="11" fill="#999999">记录后回稳态</text>
 
   <!-- 左侧回环：LFT 写回确认后回到稳态 -->
-  <polyline points="290,473 100,473 100,88 208,88" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <rect x="46" y="268" width="150" height="36" fill="#ffffff"/>
-  <text x="121" y="284" text-anchor="middle" font-size="10.5" fill="#555555">osm_lft_rcv_process</text>
-  <text x="121" y="300" text-anchor="middle" font-size="10.5" fill="#777777">逐块确认写回 lft</text>
+  <polyline points="290,473 260,473 260,89 288,89" fill="none" stroke="#666666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="106" y="268" width="150" height="36" fill="#ffffff"/>
+  <text x="181" y="284" text-anchor="middle" font-size="10.5" fill="#555555">osm_lft_rcv_process</text>
+  <text x="181" y="300" text-anchor="middle" font-size="10.5" fill="#777777">逐块确认写回 lft</text>
 </svg>
